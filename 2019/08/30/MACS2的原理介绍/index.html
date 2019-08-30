@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="泊松分布 泊松分布是统计与概率中重要的离散分布之一，泊松分布表示在一定的时间或空间内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MACS2的原理介绍">
+<meta property="og:url" content="http://yoursite.com/2019/08/30/MACS2的原理介绍/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="泊松分布 泊松分布是统计与概率中重要的离散分布之一，泊松分布表示在一定的时间或空间内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/.com//Poisson.png">
+<meta property="og:image" content="http://yoursite.com/.com//bimodal.png">
+<meta property="og:image" content="http://yoursite.com/.com//lambda.png">
+<meta property="og:updated_time" content="2019-08-30T11:14:15.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MACS2的原理介绍">
+<meta name="twitter:description" content="泊松分布 泊松分布是统计与概率中重要的离散分布之一，泊松分布表示在一定的时间或空间内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。">
+<meta name="twitter:image" content="http://yoursite.com/.com//Poisson.png">
+  <link rel="canonical" href="http://yoursite.com/2019/08/30/MACS2的原理介绍/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>MACS2的原理介绍 | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/30/MACS2的原理介绍/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">MACS2的原理介绍
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-30 19:07:01 / 修改时间：19:14:15" itemprop="dateCreated datePublished" datetime="2019-08-30T19:07:01+08:00">2019-08-30</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="泊松分布">泊松分布</h2>
+<p>泊松分布是统计与概率中重要的<strong>离散分布</strong>之一，泊松分布表示在一定的<strong>时间</strong>或<strong>空间</strong>内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。</p>
+<a id="more"></a>
+<p>泊松分布的概率分布为 <span class="math display">\[
+P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
+\]</span> 其中e代表的是自然常数，而<span class="math inline">\(\lambda\)</span>是单位时间（或单位面积）内随机事件的平均发生率，比如在一定时间内某一服务设施受到的请求次数是5次。</p>
+<p><img src="/.com//Poisson.png" height="300px"></p>
+<p>另外，泊松分布实际上只有一个参数，即<span class="math inline">\(\lambda\)</span>，其方差和期望也是<span class="math inline">\(\lambda\)</span>。同时，随着<span class="math inline">\(\lambda\)</span>的增加，图像分布会趋于对称。</p>
+<p>参考资料</p>
+<p><a href="http://hongyitong.github.io/2016/11/13/%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83%E3%80%81%E6%B3%8A%E6%9D%BE%E5%88%86%E5%B8%83%E3%80%81%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83/" target="_blank" rel="noopener">二项分布、泊松分布、正态分布的关系</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2015/06/poisson-distribution.html" target="_blank" rel="noopener">泊松分布和指数分布：10分钟教程</a></p>
+<p><a href="https://zh.wikipedia.org/wiki/%E6%B3%8A%E6%9D%BE%E5%88%86%E4%BD%88" target="_blank" rel="noopener">wiki_泊松分布</a></p>
+<h2 id="macs的算法概览">MACS的算法概览</h2>
+<h3 id="adjusting-read-position-based-on-fragment-size-distribution">Adjusting read position based on fragment size distribution</h3>
+<p>Chip-Seq的主要过程为：交联——超声破碎——特异性识别——测序。所以我们测序得到的片段就是我们转录因子结合位点周围的片段。需要注意的一点是，MACS软件出现的年代是2008年，那时候的测序读长都很短，大约50bp左右，且以单端测序为主，并没有真实反应DNA-蛋白结合片段的长度。所以说，我们如果拿测得的50bp去做reads数目的堆积，势必会与真实的结合位置有一定的偏移。事实上，测序的短reads会在真实的结合位置两侧形成双峰，如下图所A示。这也是MACS双峰模型构建的理论基础。</p>
+<p><img src="/.com//bimodal.png" height="400px"></p>
+<p>值得一提的是，像转录因子一类的蛋白与DNA，其结合位点比较narrow，所以双峰模型的构建是比较合理的。但像图B所示的，一些蛋白与DNA会产生较宽的结合区域（诸如一些组蛋白修饰），这时候双峰就不那么显著了。</p>
+<blockquote>
+<p>更为麻烦的是，有时候会有一些混合的结合位点模式，比如Polll蛋白，其会在启动子区域结合，也会覆盖整个基因区域。</p>
+</blockquote>
+<p>为了衡量真实的测序片段大小，<strong>d</strong>，MACS会粗略地以2倍的超声破碎片段长度作为window来鉴定初步的富集区域。为了避免重复区域或者PCR导致极端富集区域的影响，MACS会随机挑选1000个区域作为模型peak构建区域。这些区域的reads富集程度是基因组背景的10-30倍。对于每个区域的模型peak，MACS都会分离出对比到正链和负链上的reads，然后分别计算出这些reads的位置。从而分别构建出这个区域内的正负链上的模型peak，正负链上模型peak顶点之间距离就记为d。在d确定之后，所有的reads都会朝着3'的方向<strong>横移</strong>（<strong>shift</strong>）d/2的距离，从而更好地模拟出蛋白-DNA结合位点。</p>
+<blockquote>
+<p>在2012年的Identifying ChIP-seq enrichment using MACS这篇文章中，作者也提到对于一些过度破碎或者有着很宽的结合位点情况，可能会造成算出来的d很小。对于这种情况，我们一般建议用一个特定的片段长度，而非是预测出来的d。</p>
+<p>注意shift和extend的区别，在2008年原始的MACS文章中，作者用的是shift，而到了12年的文章，作者写错，写成了extend。当然，在MACS2中，这两种情况都存在了。</p>
+</blockquote>
+<h3 id="calculate-peak-enrichment-using-local-background-normalization">Calculate peak enrichment using local background normalization</h3>
+<p>基于先前已经调整位置的reads，MACS会在全基因组范围内以2d长度的window来寻找那些有显著富集的区域。有重叠的window会融合成一个候选区域。因为会有许多因素影响不同范围内的reads富集程度，所以MACS用了动态的<span class="math inline">\(\lambda_{local}\)</span>参数来对于reads数目的富集进行泊松分布的建模。即MACS并不会用一个常数<span class="math inline">\(\lambda\)</span>，而是用一个会在不同区域有变化的<span class="math inline">\(\lambda_{local}\)</span>。动态参数值定义为 <span class="math display">\[
+\lambda_{local}=max(\lambda_{BG},[\lambda_{region},\lambda_{1k}],\lambda_{5k},\lambda_{10k})
+\]</span> <span class="math inline">\(\lambda_{BG}\)</span>来自于全基因组的计算，<span class="math inline">\(\lambda_{region}\)</span>则来自在control中的对应区域，剩下的<span class="math inline">\(\lambda_x\)</span>则来自control中，以得到的候选区域为中心，1k，5k，10k范围内的区域计算。见下图</p>
+<figure>
+<img src="/.com//lambda.png" alt="lambda"><figcaption>lambda</figcaption>
+</figure>
+<p>如果control不在，则local值只是在Chip的样本中计算，而region和1k值也会被舍弃。同时如果Chip-Seq和control的样本测序深度不同，MACS会默认地把测序深度更深的样本缩放。</p>
+<blockquote>
+<p>关于<span class="math inline">\(\lambda\)</span>以及p值这一步的计算可能需要看源代码才可以了解了。</p>
+<p>但根据MACS2的<a href="https://github.com/taoliu/MACS/wiki/Advanced:-Call-peaks-using-MACS2-subcommands#Step_4_Build_local_bias_track_from_control" target="_blank" rel="noopener">wiki</a>来说，似乎p值和<span class="math inline">\(\lambda\)</span>的计算都是以单个碱基为单位考虑的。</p>
+</blockquote>
+<p>基于泊松分布的模型，我们就可以以单尾检验，计算出p值了。MACS默认以p=1 x 10-5为阈值。</p>
+<h3 id="estimating-the-empirical-false-discovery-rate-by-exchanging-chip-seq-and-control-samples">Estimating the empirical false discovery rate by exchanging ChIP-seq and control samples</h3>
+<p>这里MACS用的Chip和control的置换，从而检验出FDR值我并没有看懂。不过MACS2用的已经是Benjamini-Hochberg方法了，还是比较好懂的。</p>
+<p>参考资料：</p>
+<p>Evaluation of Algorithm Performance in ChIP-Seq Peak Detection</p>
+<p>Model-based Analysis of ChIP-Seq (MACS)</p>
+<p>Identifying ChIP-seq enrichment using MACS</p>
+<p><a href="https://github.com/hbctraining/In-depth-NGS-Data-Analysis-Course/blob/master/sessionV/lessons/04_peak_calling_macs.md" target="_blank" rel="noopener">In-depth-NGS-Data-Analysis-Course</a></p>
+<h2 id="macs2中的一些参数介绍">MACS2中的一些参数介绍</h2>
+<p><strong>-f/--format FORMAT</strong></p>
+<p>可以接受多种格式参数，默认使用<code>AUTO</code>来检测格式。但并不能检测“BAMPE”或者“BEDPE”格式，即双端测序格式。所以，当你的数据是双端测序数据时，你应该用BAMPE或者BEDPE参数。当你设置成双端参数的时候，MACS2就会跳过建模计算d的那一步，而是直接用片段的insert size来建立堆积。</p>
+<p><strong>--extsize</strong></p>
+<p>如果使用这个参数，那么MACS就会使用你设置的数值，来把reads从5‘—3’补齐到你指定的数值。这个参数只有当--nomodel参数设置了，或者MACS建模失败，--fix-bimodal开启的时候才可以用。</p>
+<p><strong>--shift</strong></p>
+<p>shift参数会先于extsize参数执行。如果你设置的数值为正，reads会从5‘—3’偏移，而数值为负，reads会从3'—5‘偏移。当格式为BAMPE或者BEDPE的时候，不能设置参数。</p>
+<p><strong>--broad</strong></p>
+<p>会放宽cutoff的阈值，然后把临近的区域结合起来，形成较宽的peak区域。与broad-cutoff参数是一起的，broad-cutoff参数默认为q-value的参数，为0.1。</p>
+<p><strong>有趣的是，shift后面数值如果为正，则正负链的reads会朝着中心偏移，如果后面数值为负，则正负链的reads会各自远离中心，即正链reads向左，负链reads向右。</strong></p>
+<p>给个例子：</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Original Reads:</span><br><span class="line">chr1   <span class="number"> 500 </span>  <span class="number"> 550 </span>   read1    .    (+)</span><br><span class="line">chr1   <span class="number"> 700 </span>  <span class="number"> 750 </span>   read2    .    (-)</span><br><span class="line"></span><br><span class="line">--shift -100</span><br><span class="line">chr1   <span class="number"> 400 </span>  <span class="number"> 450 </span>   read1    .    (+)</span><br><span class="line">chr1   <span class="number"> 800 </span>  <span class="number"> 850 </span>   read2    .    (-)</span><br><span class="line"></span><br><span class="line">--extsize 200</span><br><span class="line">chr1   <span class="number"> 400 </span>  <span class="number"> 600 </span>   read1    .    (+)</span><br><span class="line">chr1   <span class="number"> 650 </span>  <span class="number"> 850 </span>   read2    .    (-)</span><br></pre></td></tr></table></figure>
+<p>参考资料：</p>
+<p><a href="https://github.com/taoliu/MACS" target="_blank" rel="noopener">MACS_github</a></p>
+<p><a href="https://groups.google.com/forum/#!msg/macs-announcement/4OCE59gkpKY/v9Tnh9jWriUJ" target="_blank" rel="noopener">google_group</a></p>
+<p><a href="https://www.jianshu.com/p/6a975f0ea65a" target="_blank" rel="noopener">如何使用MACS进行peak calling</a></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/08/30/Mfuzz的使用/" rel="next" title="Mfuzz的使用">
+                  <i class="fa fa-chevron-left"></i> Mfuzz的使用
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#泊松分布"><span class="nav-number">1.</span> <span class="nav-text">泊松分布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#macs的算法概览"><span class="nav-number">2.</span> <span class="nav-text">MACS的算法概览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#adjusting-read-position-based-on-fragment-size-distribution"><span class="nav-number">2.1.</span> <span class="nav-text">Adjusting read position based on fragment size distribution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#calculate-peak-enrichment-using-local-background-normalization"><span class="nav-number">2.2.</span> <span class="nav-text">Calculate peak enrichment using local background normalization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#estimating-the-empirical-false-discovery-rate-by-exchanging-chip-seq-and-control-samples"><span class="nav-number">2.3.</span> <span class="nav-text">Estimating the empirical false discovery rate by exchanging ChIP-seq and control samples</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#macs2中的一些参数介绍"><span class="nav-number">3.</span> <span class="nav-text">MACS2中的一些参数介绍</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Shawn</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>
