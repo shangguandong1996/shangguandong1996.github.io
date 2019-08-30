@@ -4,7 +4,7 @@
 
 
 
-<html lang="zh-CN">
+<html lang="zh-Hans">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -45,29 +45,30 @@
     path: 'search.xml',
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
     translation: {
-      copy_button: '复制',
-      copy_success: '复制成功',
-      copy_failure: '复制失败'
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
     },
     sidebarPadding: 40
   };
 </script>
 
   <meta name="description" content="泊松分布 泊松分布是统计与概率中重要的离散分布之一，泊松分布表示在一定的时间或空间内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。">
+<meta name="keywords" content="Bioinformatics">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MACS2的原理介绍">
 <meta property="og:url" content="http://yoursite.com/2019/08/30/MACS2的原理介绍/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Blog">
 <meta property="og:description" content="泊松分布 泊松分布是统计与概率中重要的离散分布之一，泊松分布表示在一定的时间或空间内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yoursite.com/.com//Poisson.png">
-<meta property="og:image" content="http://yoursite.com/.com//bimodal.png">
-<meta property="og:image" content="http://yoursite.com/.com//lambda.png">
-<meta property="og:updated_time" content="2019-08-30T11:14:15.687Z">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/MACS2_Poisson.png">
+<meta property="og:image" content="http://yoursite.com/images/MACS2_bimodal.png">
+<meta property="og:image" content="http://yoursite.com/images/MACS2_lambda.png">
+<meta property="og:updated_time" content="2019-08-30T12:12:27.434Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MACS2的原理介绍">
 <meta name="twitter:description" content="泊松分布 泊松分布是统计与概率中重要的离散分布之一，泊松分布表示在一定的时间或空间内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。">
-<meta name="twitter:image" content="http://yoursite.com/.com//Poisson.png">
+<meta name="twitter:image" content="http://yoursite.com/images/MACS2_Poisson.png">
   <link rel="canonical" href="http://yoursite.com/2019/08/30/MACS2的原理介绍/">
 
 
@@ -119,7 +120,7 @@
 
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
   <div class="container use-motion">
     <div class="headband"></div>
 	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
@@ -138,7 +139,7 @@
   </div>
 
   <div class="site-nav-toggle">
-    <button aria-label="切换导航栏">
+    <button aria-label="Toggle navigation bar">
       <span class="btn-bar"></span>
       <span class="btn-bar"></span>
       <span class="btn-bar"></span>
@@ -158,7 +159,7 @@
       
     
 
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
 
   </li>
       
@@ -169,7 +170,7 @@
       
     
 
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
 
   </li>
       
@@ -180,7 +181,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
 
   </li>
       
@@ -191,7 +192,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
 
   </li>
       
@@ -202,13 +203,13 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
 
   </li>
       <li class="menu-item menu-item-search">
         <a href="javascript:;" class="popup-trigger">
         
-          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>Search</a>
       </li>
     
   </ul>
@@ -224,7 +225,7 @@
   </span>
   <div class="search-input-container">
     <input autocomplete="off" autocorrect="off" autocapitalize="none"
-           placeholder="搜索..." spellcheck="false"
+           placeholder="Searching..." spellcheck="false"
            type="text" id="search-input">
   </div>
   <span class="popup-btn-close">
@@ -281,18 +282,31 @@
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              <span class="post-meta-item-text">发表于</span>
+              <span class="post-meta-item-text">Posted on</span>
 
               
                 
               
 
-              <time title="创建时间：2019-08-30 19:07:01 / 修改时间：19:14:15" itemprop="dateCreated datePublished" datetime="2019-08-30T19:07:01+08:00">2019-08-30</time>
+              <time title="Created: 2019-08-30 19:07:01 / Modified: 20:12:27" itemprop="dateCreated datePublished" datetime="2019-08-30T19:07:01+08:00">2019-08-30</time>
             </span>
           
             
 
             
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法原理/" itemprop="url" rel="index"><span itemprop="name">算法原理</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -312,7 +326,7 @@
 <p>泊松分布的概率分布为 <span class="math display">\[
 P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
 \]</span> 其中e代表的是自然常数，而<span class="math inline">\(\lambda\)</span>是单位时间（或单位面积）内随机事件的平均发生率，比如在一定时间内某一服务设施受到的请求次数是5次。</p>
-<p><img src="/.com//Poisson.png" height="300px"></p>
+<p><img src="/images/MACS2_Poisson.png" height="300px" text-align: center></p>
 <p>另外，泊松分布实际上只有一个参数，即<span class="math inline">\(\lambda\)</span>，其方差和期望也是<span class="math inline">\(\lambda\)</span>。同时，随着<span class="math inline">\(\lambda\)</span>的增加，图像分布会趋于对称。</p>
 <p>参考资料</p>
 <p><a href="http://hongyitong.github.io/2016/11/13/%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83%E3%80%81%E6%B3%8A%E6%9D%BE%E5%88%86%E5%B8%83%E3%80%81%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83/" target="_blank" rel="noopener">二项分布、泊松分布、正态分布的关系</a></p>
@@ -321,7 +335,7 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
 <h2 id="macs的算法概览">MACS的算法概览</h2>
 <h3 id="adjusting-read-position-based-on-fragment-size-distribution">Adjusting read position based on fragment size distribution</h3>
 <p>Chip-Seq的主要过程为：交联——超声破碎——特异性识别——测序。所以我们测序得到的片段就是我们转录因子结合位点周围的片段。需要注意的一点是，MACS软件出现的年代是2008年，那时候的测序读长都很短，大约50bp左右，且以单端测序为主，并没有真实反应DNA-蛋白结合片段的长度。所以说，我们如果拿测得的50bp去做reads数目的堆积，势必会与真实的结合位置有一定的偏移。事实上，测序的短reads会在真实的结合位置两侧形成双峰，如下图所A示。这也是MACS双峰模型构建的理论基础。</p>
-<p><img src="/.com//bimodal.png" height="400px"></p>
+<p><img src="/images/MACS2_bimodal.png" height="400px"></p>
 <p>值得一提的是，像转录因子一类的蛋白与DNA，其结合位点比较narrow，所以双峰模型的构建是比较合理的。但像图B所示的，一些蛋白与DNA会产生较宽的结合区域（诸如一些组蛋白修饰），这时候双峰就不那么显著了。</p>
 <blockquote>
 <p>更为麻烦的是，有时候会有一些混合的结合位点模式，比如Polll蛋白，其会在启动子区域结合，也会覆盖整个基因区域。</p>
@@ -336,7 +350,7 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
 \lambda_{local}=max(\lambda_{BG},[\lambda_{region},\lambda_{1k}],\lambda_{5k},\lambda_{10k})
 \]</span> <span class="math inline">\(\lambda_{BG}\)</span>来自于全基因组的计算，<span class="math inline">\(\lambda_{region}\)</span>则来自在control中的对应区域，剩下的<span class="math inline">\(\lambda_x\)</span>则来自control中，以得到的候选区域为中心，1k，5k，10k范围内的区域计算。见下图</p>
 <figure>
-<img src="/.com//lambda.png" alt="lambda"><figcaption>lambda</figcaption>
+<img src="/images/MACS2_lambda.png" alt="lambda"><figcaption>lambda</figcaption>
 </figure>
 <p>如果control不在，则local值只是在Chip的样本中计算，而region和1k值也会被舍弃。同时如果Chip-Seq和control的样本测序深度不同，MACS会默认地把测序深度更深的样本缩放。</p>
 <blockquote>
@@ -377,6 +391,15 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
       
 
       <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Bioinformatics/" rel="tag"># Bioinformatics</a>
+            
+          </div>
+        
 
         
 
@@ -431,10 +454,10 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          文章目录
+          Table of Contents
         </li>
         <li class="sidebar-nav-overview">
-          站点概览
+          Overview
         </li>
       </ul>
 
@@ -456,7 +479,7 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
           <a href="/archives/">
         
           <span class="site-state-item-count">2</span>
-          <span class="site-state-item-name">日志</span>
+          <span class="site-state-item-name">posts</span>
         </a>
       </div>
     
@@ -472,8 +495,10 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
         
           
         
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">分类</span>
+          
+        
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span>
         </a>
       </div>
     
@@ -490,7 +515,7 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
           
         
         <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">标签</span>
+        <span class="site-state-item-name">tags</span>
         </a>
       </div>
     
@@ -516,9 +541,9 @@ P(X = k)=\frac{e^{-\lambda}\lambda^{k}}{k!}
   </span>
   <span class="author" itemprop="copyrightHolder">Shawn</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
 
         
 
