@@ -61,7 +61,7 @@
 <meta property="og:site_name" content="Shawn&#39;s Blog">
 <meta property="og:description" content="最近在进行ATAC和RNA-Seq的联合分析，由于处理的材料是时间相关的，所以time-course也是一个可以分析的点。在一位刘潜老哥的帮助下，我找到了一篇靠谱熊 转录组时间序列数据处理 的文章，里面提到了mfuzz这个包。里面的软聚类的思想非常符合我的预期，然后就决定拿这个包进行我time-course的分析。为了更好的分析，我决定先翻译下这个包，了解下这个包的大致思想。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-30T08:29:43.480Z">
+<meta property="og:updated_time" content="2019-08-30T08:44:00.123Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mfuzz的使用">
 <meta name="twitter:description" content="最近在进行ATAC和RNA-Seq的联合分析，由于处理的材料是时间相关的，所以time-course也是一个可以分析的点。在一位刘潜老哥的帮助下，我找到了一篇靠谱熊 转录组时间序列数据处理 的文章，里面提到了mfuzz这个包。里面的软聚类的思想非常符合我的预期，然后就决定拿这个包进行我time-course的分析。为了更好的分析，我决定先翻译下这个包，了解下这个包的大致思想。">
@@ -257,7 +257,7 @@
                 
               
 
-              <time title="创建时间：2019-08-30 16:22:10 / 修改时间：16:29:43" itemprop="dateCreated datePublished" datetime="2019-08-30T16:22:10+08:00">2019-08-30</time>
+              <time title="创建时间：2019-08-30 16:22:10 / 修改时间：16:44:00" itemprop="dateCreated datePublished" datetime="2019-08-30T16:22:10+08:00">2019-08-30</time>
             </span>
           
             
@@ -353,9 +353,11 @@
 <p>FCM参数的变化也可以体现出cluster的稳健性。我们认为那些稳健的clusters具有某个特征，即在m的变化下，也只会展现出很小的变化。</p>
 <figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cl2 &lt;- mfuzz(yeast.s,c=<span class="number">16</span>,m=<span class="number">1.35</span>)</span><br><span class="line">mfuzz.plot(yeast.s,cl=cl2,mfrow=c(<span class="number">4</span>,<span class="number">4</span>),time.labels=seq(<span class="number">0</span>,<span class="number">160</span>,<span class="number">10</span>))</span><br></pre></td></tr></table></figure>
 <h2 id="global-clustering-structures">6 Global clustering structures</h2>
-<p>软聚类有趣的一点就是clusters之间的overlap或者coupling。在cluster k和l之间的coupling coefficient <span class="math inline">\(V_{kl}\)</span> 可以定义为： <span class="math display">\[
+<p>软聚类有趣的一点就是clusters之间的overlap或者coupling。在cluster k和l之间的coupling coefficient <span class="math inline">\(V_{kl}\)</span> 可以定义为：</p>
+<p><span class="math display">\[
 V_{kl}=\frac{1}{N}\sum^{N}_{i=1}{\mu_{ik}}{\mu_{il}}
-\]</span> N是整个基因表达矩阵的数目。如果coupling值越低，说明两者的表达模式距离越远。如果越高，说明表达模式越相近。</p>
+\]</span></p>
+<p>N是整个基因表达矩阵的数目。如果coupling值越低，说明两者的表达模式距离越远。如果越高，说明表达模式越相近。</p>
 <figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">O &lt;- overlap(<span class="keyword">cl</span>)</span><br><span class="line">Ptmp &lt;-  overlap.<span class="keyword">plot</span>(<span class="keyword">cl</span>,over=O,thres=0.05)</span><br></pre></td></tr></table></figure>
 <h2 id="mfuzzgui---the-graphical-user-interface-for-the-mfuzz-pack-age">7 Mfuzzgui - the graphical user interface for the Mfuzz pack-age</h2>
 <p>mfuzz有图形化界面，不过我没去用。</p>
@@ -554,6 +556,56 @@ V_{kl}=\frac{1}{N}\sum^{N}_{i=1}{\mu_{ik}}{\mu_{il}}
 
   
 
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
   
 
   
