@@ -53,28 +53,33 @@
   };
 </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Shawn&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。">
+<meta name="keywords" content="Statistics,R">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给女朋友写的生统资料_Part1">
+<meta property="og:url" content="http://yoursite.com/2019/05/08/给女朋友写的生统资料-Part1/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-08-31T02:44:29.256Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Shawn&#39;s Blog">
-  <link rel="canonical" href="http://yoursite.com/">
+<meta name="twitter:title" content="给女朋友写的生统资料_Part1">
+<meta name="twitter:description" content="因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。">
+  <link rel="canonical" href="http://yoursite.com/2019/05/08/给女朋友写的生统资料-Part1/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome: true,
-    isPost: false,
+    isHome: false,
+    isPost: true,
     isPage: false,
     isArchive: false
   };
 </script>
 
-  <title>Shawn's Blog</title>
+  <title>给女朋友写的生统资料_Part1 | Shawn's Blog</title>
   <meta name="generator" content="Hexo 3.9.0">
   
 
@@ -244,12 +249,13 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
+
   <div id="posts" class="posts-expand">
-        <article itemscope itemtype="http://schema.org/Article">
+      <article itemscope itemtype="http://schema.org/Article">
   
   
   
-  <div class="post-block home">
+  <div class="post-block post">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/08/给女朋友写的生统资料-Part1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -262,9 +268,8 @@
       <meta itemprop="name" content="Shawn's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/2019/05/08/给女朋友写的生统资料-Part1/" class="post-title-link" itemprop="url">给女朋友写的生统资料_Part1</a>
+        <h1 class="post-title" itemprop="name headline">给女朋友写的生统资料_Part1
+
           
         </h1>
 
@@ -319,344 +324,97 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/05/08/给女朋友写的生统资料-Part1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
+        <p>因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。</p>
+<a id="more"></a>
+<h2 id="前期准备">前期准备</h2>
+<ul>
+<li>语言问题:</li>
+</ul>
+<p>对于 R 或者 R studio来说，我非常建议把语言更改成英文。这样，在你报错的时候，比较方便去搜索</p>
+<ul>
+<li>工作路径：</li>
+</ul>
+<p>对于有R studio的来说，频繁地切换 <code>setwd</code> 和 <code>getwd</code> 可能不是一个很好的选择。所以我比较推荐新建一个Project，这样你每次你的任务都会是独立的。新建完Project之后你就可以把作业相关的数据放在你的Project里面。在后面读取的时候，就不用切换 <code>setwd</code> 或者打一大串目录了。</p>
+<ul>
+<li>保存问题：</li>
+</ul>
+<p>我比较推荐的是在Tools-Global Options—General那里，将Save Worksapce to .RData on exit那里设置为Never。这可能会导致你每次打开你的Project，变量都还得重新打一遍。但这可以保证你的代码的可重复性。</p>
+<ul>
+<li>镜像及安装问题：</li>
+</ul>
+<p>生统课上的如果包都很小，所以镜像设置其实是无所谓的。 如果想安装某个包的话，使用如下代码 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">## 以安装pwr包为例，注意加引号</span><br><span class="line">#install.packages(&quot;pwr&quot;)</span><br></pre></td></tr></table></figure></p>
+<h2 id="数据读取">数据读取</h2>
+<p>生统课上用到的文件一般给的都是 txt 或者 csv 文件，这意味一般着只需要使用 <code>read.table</code> 这个命令来读取文件就可以了。 让我们先来看一下read.table这个函数怎么用。 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?read.table</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>不懂的时候寻求谷歌或者?+命令，是一个很好的习惯</p>
+</blockquote>
+<p>你会发现read.table()里面跟了一大堆东西，其中跟我们可能相关的是</p>
+<ul>
+<li>file：代表你要读的文件路径</li>
+<li>header：表达你是否要添加表头，默认值是FALSE，我们一般要设置为TRUE</li>
+<li>sep：sep代表是你用什么样的形式来分割你读取的文件，一般生统的文件可能会以空格，制表符，逗号来分割。分别对应<code>sep = " "，sep = ","，sep = "\t"</code></li>
+</ul>
+<p>我们来尝试读一个文件 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">test1 &lt;- read.table(&quot;rawdata/test1.txt&quot;,header = T)</span><br><span class="line">head(test1)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">##   yield seed</span><br><span class="line">## <span class="number">1</span>   <span class="number">383</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">2</span>   <span class="number">406</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">3</span>   <span class="number">351</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">4</span>   <span class="number">400</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">5</span>   <span class="number">390</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">6</span>   <span class="number">361</span>    <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><p>这里我们用了 header = T ，这样我们的数据就会有表头，或者说列名了。即 yield 和 seed。</p></li>
+<li><p>TRUE和T是等价的，同理FALSE和F也是等价的。</p></li>
+<li><p>csv是本质上是用逗号分割的文件，所以我们在读的时候加上 <code>sep = ","</code> 即可。</p></li>
+<li><p>head代表的是你只输出你数据的前几行。同理，tail输出后几行。</p></li>
+<li>再次提醒一遍，感觉不懂命令是什么时候用<code>?</code>或者谷歌。</li>
+<li><p>你还可以用row.names=1，来将第一列当作行名。</p></li>
+</ul>
+</blockquote>
+
     </div>
 
     
     
     
+        
+      
+
       <footer class="post-footer">
-          <div class="post-eof"></div>
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Statistics/" rel="tag"># Statistics</a>
+            
+              <a href="/tags/R/" rel="tag"># R</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/02/17/MACS2的原理介绍/" rel="next" title="MACS2的原理介绍">
+                  <i class="fa fa-chevron-left"></i> MACS2的原理介绍
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
         
       </footer>
+    
   </div>
   
   
   
   </article>
 
-    
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/17/MACS2的原理介绍/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Shawn's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/2019/02/17/MACS2的原理介绍/" class="post-title-link" itemprop="url">MACS2的原理介绍</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-17 13:27:01" itemprop="dateCreated datePublished" datetime="2019-02-17T13:27:01+08:00">2019-02-17</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-08-31 10:39:54" itemprop="dateModified" datetime="2019-08-31T10:39:54+08:00">2019-08-31</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/算法原理/" itemprop="url" rel="index"><span itemprop="name">算法原理</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="泊松分布">泊松分布</h2>
-<p>泊松分布是统计与概率中重要的<strong>离散分布</strong>之一，泊松分布表示在一定的<strong>时间</strong>或<strong>空间</strong>内出现的事件个数，比如某一服务设施在一定时间内受到的服务请求的次数、DNA序列的变异数、汽车站台的等候人数。根据MACS的论文中所描述的，Chip-Seq实验中全基因组的reads分布恰好是符合泊松分布的。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/02/17/MACS2的原理介绍/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
   </div>
-  
-  
-  
-  </article>
-
-    
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/13/我刷过的统计学资料/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Shawn's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/2019/02/13/我刷过的统计学资料/" class="post-title-link" itemprop="url">我刷过的统计学资料</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-13 20:35:52" itemprop="dateCreated datePublished" datetime="2019-02-13T20:35:52+08:00">2019-02-13</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-08-31 10:39:20" itemprop="dateModified" datetime="2019-08-31T10:39:20+08:00">2019-08-31</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/统计学习/" itemprop="url" rel="index"><span itemprop="name">统计学习</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>感觉大家的统计学习兴趣都很浓，我这里也把我之前刷的一些统计资料说下。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/02/13/我刷过的统计学资料/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-        <article itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block home">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/06/Mfuzz的使用/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Shawn">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Shawn's Blog">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-            
-            <a href="/2019/01/06/Mfuzz的使用/" class="post-title-link" itemprop="url">Mfuzz的使用</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-01-06 11:22:10" itemprop="dateCreated datePublished" datetime="2019-01-06T11:22:10+08:00">2019-01-06</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-08-31 10:40:31" itemprop="dateModified" datetime="2019-08-31T10:40:31+08:00">2019-08-31</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/软件的使用/" itemprop="url" rel="index"><span itemprop="name">软件的使用</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近在进行ATAC和RNA-Seq的联合分析，由于处理的材料是时间相关的，所以time-course也是一个可以分析的点。在一位刘潜老哥的帮助下，我找到了一篇靠谱熊 <a href="https://www.jianshu.com/p/2067864259c5" target="_blank" rel="noopener">转录组时间序列数据处理</a> 的文章，里面提到了mfuzz这个包。里面的软聚类的思想非常符合我的预期，然后就决定拿这个包进行我time-course的分析。为了更好的分析，我决定先翻译下这个包，了解下这个包的大致思想。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/01/06/Mfuzz的使用/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-          <div class="post-eof"></div>
-        
-      </footer>
-  </div>
-  
-  
-  
-  </article>
-
-    
-  </div>
-
-  
 
 
           </div>
@@ -675,6 +433,11 @@
 
   <aside class="sidebar">
     <div class="sidebar-inner">
+        
+        
+        
+        
+      
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
@@ -687,6 +450,8 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前期准备"><span class="nav-number">1.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据读取"><span class="nav-number">2.</span> <span class="nav-text">数据读取</span></a></li></ol></div>
+        
       </div>
       <!--/noindex-->
 
