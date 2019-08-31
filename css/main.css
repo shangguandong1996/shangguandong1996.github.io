@@ -154,7 +154,7 @@ body {
   background: #fff;
   color: #555;
   font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 2;
 }
 @media (max-width: 991px) {
@@ -305,7 +305,7 @@ kbd {
 }
 .translation {
   color: #999;
-  font-size: 0.875em;
+  font-size: 14px;
   margin-top: -20px;
 }
 .table-container {
@@ -1114,7 +1114,7 @@ pre .javascript .function {
 .menu-item span.exturl {
   border-bottom: 1px solid transparent;
   display: block;
-  font-size: 0.8125em;
+  font-size: 12px;
   line-height: inherit;
   transition-property: border-color;
   transition-delay: 0s;
@@ -1138,22 +1138,22 @@ pre .javascript .function {
 }
 @media (min-width: 1200px) {
   .post-body {
-    font-size: 1.125em;
+    font-size: 18px;
   }
 }
 @media (max-width: 767px) {
   .post-body {
-    font-size: 0.875em;
+    font-size: 14px;
   }
 }
 .post-body span.exturl .fa {
-  font-size: 0.875em;
+  font-size: 14px;
   margin-left: 4px;
 }
 .post-body .image-caption,
 .post-body .figure .caption {
   color: #999;
-  font-size: 0.875em;
+  font-size: 14px;
   font-weight: bold;
   line-height: 1;
   margin: -20px auto 15px;
@@ -1192,7 +1192,7 @@ pre .javascript .function {
   }
 }
 .posts-collapse .collection-title {
-  font-size: 1.125em;
+  font-size: 18px;
   position: relative;
 }
 .posts-collapse .collection-title::before {
@@ -1298,7 +1298,7 @@ pre .javascript .function {
   z-index: -1;
 }
 .posts-collapse .fa-external-link {
-  font-size: 0.875em;
+  font-size: 14px;
   margin-left: 5px;
 }
 .post-eof {
@@ -1425,7 +1425,7 @@ article:last-child .post-eof {
   text-align: center;
 }
 .posts-expand .post-meta .post-description {
-  font-size: 0.875em;
+  font-size: 14px;
   margin-top: 2px;
 }
 .posts-expand .post-meta time {
@@ -1475,7 +1475,7 @@ article:last-child .post-eof {
   border-bottom: none;
   color: #555;
   display: block;
-  font-size: 0.875em;
+  font-size: 14px;
   line-height: 1.6;
   position: relative;
 }
@@ -1525,7 +1525,7 @@ article:last-child .post-eof {
 }
 .post-tags a {
   display: inline-block;
-  font-size: 0.8125em;
+  font-size: 12px;
   margin-right: 10px;
 }
 .posts-expand .post-title {
@@ -1562,7 +1562,7 @@ article:last-child .post-eof {
   visibility: visible;
 }
 .posts-expand .post-title-link .fa {
-  font-size: 0.875em;
+  font-size: 14px;
   margin-left: 5px;
 }
 .post-widgets {
@@ -1579,7 +1579,7 @@ article:last-child .post-eof {
 }
 .social-like {
   display: flex;
-  font-size: 0.875em;
+  font-size: 14px;
   justify-content: center;
   text-align: center;
 }
@@ -1666,14 +1666,14 @@ article:last-child .post-eof {
 .links-of-author span.exturl {
   border-bottom-color: #555;
   display: inline-block;
-  font-size: 0.8125em;
+  font-size: 12px;
   margin-bottom: 10px;
   margin-right: 10px;
   vertical-align: middle;
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #9db6ff;
+  background: #9e6742;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1709,11 +1709,11 @@ article:last-child .post-eof {
   color: #fff;
 }
 .links-of-blogroll {
-  font-size: 0.8125em;
+  font-size: 12px;
   margin-top: 10px;
 }
 .links-of-blogroll-title {
-  font-size: 0.875em;
+  font-size: 14px;
   font-weight: 600;
   margin-top: 0;
 }
@@ -1764,7 +1764,7 @@ article:last-child .post-eof {
   color: #555;
   cursor: pointer;
   display: inline-block;
-  font-size: 0.875em;
+  font-size: 14px;
 }
 .sidebar-nav li.sidebar-nav-overview {
   margin-left: 10px;
@@ -1825,7 +1825,7 @@ article:last-child .post-eof {
   overflow-y: auto;
 }
 .post-toc {
-  font-size: 0.875em;
+  font-size: 14px;
 }
 .post-toc ol {
   list-style: none;
@@ -1908,7 +1908,7 @@ article:last-child .post-eof {
 }
 .footer {
   color: #999;
-  font-size: 0.875em;
+  font-size: 14px;
 }
 .footer.footer-fixed {
   bottom: 0;
@@ -2538,7 +2538,7 @@ hr {
   background: none;
   border: 0;
   border-bottom: 2px solid #666;
-  font-size: 0.875em;
+  font-size: 14px;
   padding: 0;
   transition-property: border;
 }
