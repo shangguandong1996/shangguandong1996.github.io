@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="前面我们已经讲过了在生统课上会用到基本的数据结构以及怎么来提取我们想要的数据，这一部分我们来讲讲数据的清洗。">
+<meta name="keywords" content="R">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给女朋友写的生统资料_Part6">
+<meta property="og:url" content="http://yoursite.com/2019/05/18/给女朋友写的生统资料-Part6/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="前面我们已经讲过了在生统课上会用到基本的数据结构以及怎么来提取我们想要的数据，这一部分我们来讲讲数据的清洗。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-01T01:50:19.990Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="给女朋友写的生统资料_Part6">
+<meta name="twitter:description" content="前面我们已经讲过了在生统课上会用到基本的数据结构以及怎么来提取我们想要的数据，这一部分我们来讲讲数据的清洗。">
+  <link rel="canonical" href="http://yoursite.com/2019/05/18/给女朋友写的生统资料-Part6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>给女朋友写的生统资料_Part6 | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/18/给女朋友写的生统资料-Part6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shawn">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">给女朋友写的生统资料_Part6
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-18 21:46:49" itemprop="dateCreated datePublished" datetime="2019-05-18T21:46:49+08:00">2019-05-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-01 09:50:19" itemprop="dateModified" datetime="2019-09-01T09:50:19+08:00">2019-09-01</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生物医学统计课/" itemprop="url" rel="index"><span itemprop="name">生物医学统计课</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>前面我们已经讲过了在生统课上会用到基本的数据结构以及怎么来提取我们想要的数据，这一部分我们来讲讲数据的清洗。</p>
+<a id="more"></a>
+<p>在生统课上，我们基本上会遇到两种数据结构。一种是我把其叫做宽数据，就比如我们在第五次生统作业中，碰到的第二题的数据。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; test2 &lt;- read.table(<span class="string">"rawdata/test2.txt"</span>,header = T)</span><br><span class="line"></span><br><span class="line">&gt; head(test2)</span><br><span class="line">  <span class="section">control</span>   low middle  high</span><br><span class="line"><span class="number">1</span>   <span class="number">20.79</span> <span class="number">22.22</span>  <span class="number">28.56</span> <span class="number">31.93</span></span><br><span class="line"><span class="number">2</span>   <span class="number">22.91</span> <span class="number">24.74</span>  <span class="number">28.67</span> <span class="number">37.94</span></span><br><span class="line"><span class="number">3</span>   <span class="number">27.21</span> <span class="number">21.53</span>  <span class="number">25.28</span> <span class="number">39.76</span></span><br><span class="line"><span class="number">4</span>   <span class="number">19.34</span> <span class="number">19.66</span>  <span class="number">30.28</span> <span class="number">27.94</span></span><br><span class="line"><span class="number">5</span>   <span class="number">17.85</span> <span class="number">25.89</span>  <span class="number">23.13</span> <span class="number">29.65</span></span><br><span class="line"><span class="number">6</span>   <span class="number">23.79</span> <span class="number">29.10</span>  <span class="number">23.47</span> <span class="number">34.23</span></span><br></pre></td></tr></table></figure>
+<p>这种数据<strong>列名</strong>其实是不同的处理，每一列都对应不同处理下的值。</p>
+<blockquote>
+<p>实际上，这种数据还不能称之为真正意义上的宽数据，这里拿来指代是为了方便与长数据区分。</p>
+</blockquote>
+<p>另一种就是长数据，也就是我上一节翻来覆去提到过的数据结构。其每一行都是一个观测值，列名则是变量名。典型的就是我们在第五次生统作业中，碰到过的第一题的数据。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; test1 &lt;- read.table(<span class="string">"rawdata/test1.txt"</span>,header = T)</span><br><span class="line">&gt; head(test1)</span><br><span class="line">  yield seed</span><br><span class="line"><span class="number">1</span>   <span class="number">383</span>    <span class="number">1</span></span><br><span class="line"><span class="number">2</span>   <span class="number">406</span>    <span class="number">1</span></span><br><span class="line"><span class="number">3</span>   <span class="number">351</span>    <span class="number">1</span></span><br><span class="line"><span class="number">4</span>   <span class="number">400</span>    <span class="number">1</span></span><br><span class="line"><span class="number">5</span>   <span class="number">390</span>    <span class="number">1</span></span><br><span class="line"><span class="number">6</span>   <span class="number">361</span>    <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>由于宽数据在线性回归，方差分析等分析中都无法被函数所识别，所以我们首先讲讲如何把宽数据转换成长数据。</p>
+<h2 id="gather函数转换">gather函数转换</h2>
+<p>首先介绍的是 tidyr 包的 gather 函数。tidyr 包的安装就是我们之前讲过的方法</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">install</span>.packages(<span class="string">"tidyr"</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>有点建议大家直接装 tidyverse 包，这是个各种包的合集，里面还包括了 ggplot2 等。不过有可能安不上 tidyverse ， 如果安装有问题，欢迎大家在下面提出问题。</p>
+</blockquote>
+<p>gather 函数的使用非常方便，你只需要指定你转换后的 key 那列的列名，value 那列的列名，以及你需要转成长数据的那几列。我们以 test2 为例。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 加载包</span><br><span class="line">library(tidyr)</span><br><span class="line"></span><br><span class="line"># 使用gahter</span><br><span class="line">&gt; test2_long &lt;- gather(test2, <span class="type">key</span> = <span class="string">"Treatment_dose"</span>, value = <span class="string">"survive_time"</span>,<span class="section">control</span>, low, middle, high)</span><br><span class="line">&gt; head(test2_long)</span><br><span class="line">  Treatment_dose survive_time</span><br><span class="line"><span class="number">1</span>        <span class="section">control</span>        <span class="number">20.79</span></span><br><span class="line"><span class="number">2</span>        <span class="section">control</span>        <span class="number">22.91</span></span><br><span class="line"><span class="number">3</span>        <span class="section">control</span>        <span class="number">27.21</span></span><br><span class="line"><span class="number">4</span>        <span class="section">control</span>        <span class="number">19.34</span></span><br><span class="line"><span class="number">5</span>        <span class="section">control</span>        <span class="number">17.85</span></span><br><span class="line"><span class="number">6</span>        <span class="section">control</span>        <span class="number">23.79</span></span><br></pre></td></tr></table></figure>
+<p>gather 函数你需要输入参数为</p>
+<ul>
+<li><p>第一个参数是你的数据集</p></li>
+<li><p>第二个参数是你新构建的<strong>关键列</strong>的名称（该列的内容由原先数据集的列名组成）</p>
+<blockquote>
+<p>名字自己取，像我这里就取名为"Treatment_dose"</p>
+</blockquote></li>
+<li><p>第三个参数是新构建的<strong>数值列</strong>的名称</p>
+<blockquote>
+<p>名字还是自己取，我这里取名为"survive_time"</p>
+</blockquote></li>
+<li><p>后面的几个参数都是你要用来构建<strong>关键列</strong>的那几个列名</p>
+<blockquote>
+<p>这里就是control, low, middle, high，即原来的几个列名。</p>
+</blockquote></li>
+</ul>
+<blockquote>
+<p>key 和 value 大家可能还是比较懵逼，但对于我们普通的生统数据，不需要太过于纠结其意义。</p>
+<p>gather用法在转换的时候还要考虑uniq key的问题，但我们生统的数据应该也不需要考虑这一点。</p>
+</blockquote>
+<p>也有人提到过用 reshape2 包的 melt 函数，或者基本包 transform 函数来转换。但我觉得没有 gather 这个函数直观，简单。还有，gather 转换的时候对于不等长数据的支持也比较好。就比如我们在第五次生统作业的第三题，药物 1 和 2 有 15 只小鼠，药物 3 只有 10 只老鼠。如果只是单纯地按我们之前的做法读入数据框，就会报错。</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; test3 &lt;- <span class="keyword">read</span>.<span class="keyword">table</span>(<span class="string">"rawdata/test3.txt"</span>,header = T)</span><br><span class="line"><span class="keyword">Error</span> <span class="keyword">in</span> scan(<span class="keyword">file</span> = <span class="keyword">file</span>, what = what, sep = sep, quote = quote, <span class="keyword">dec</span> = <span class="keyword">dec</span>,  : </span><br><span class="line">  <span class="keyword">line</span> 11 did not have 3 elements</span><br></pre></td></tr></table></figure>
+<p>就是因为3列数据不等长，所以R才会报错。这时候，我们就可以设置一个参数</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&gt; test3 &lt;- read.table(<span class="string">"rawdata/test3.txt"</span>,header = T,fill = T)</span><br><span class="line">&gt; test3</span><br><span class="line">   med1 med2 med3</span><br><span class="line"><span class="number">1</span>    <span class="number">40</span>   <span class="number">50</span>   <span class="number">60</span></span><br><span class="line"><span class="number">2</span>    <span class="number">10</span>   <span class="number">20</span>   <span class="number">30</span></span><br><span class="line"><span class="number">3</span>    <span class="number">35</span>   <span class="number">45</span>  <span class="number">100</span></span><br><span class="line"><span class="number">4</span>    <span class="number">25</span>   <span class="number">55</span>   <span class="number">85</span></span><br><span class="line"><span class="number">5</span>    <span class="number">20</span>   <span class="number">20</span>   <span class="number">20</span></span><br><span class="line"><span class="number">6</span>    <span class="number">15</span>   <span class="number">15</span>   <span class="number">55</span></span><br><span class="line"><span class="number">7</span>    <span class="number">35</span>   <span class="number">80</span>   <span class="number">45</span></span><br><span class="line"><span class="number">8</span>    <span class="number">15</span>  <span class="number">-10</span>   <span class="number">30</span></span><br><span class="line"><span class="number">9</span>    <span class="number">-5</span>  <span class="number">105</span>   <span class="number">77</span></span><br><span class="line"><span class="number">10</span>   <span class="number">30</span>   <span class="number">75</span>  <span class="number">105</span></span><br><span class="line"><span class="number">11</span>   <span class="number">25</span>   <span class="number">10</span>   NA</span><br><span class="line"><span class="number">12</span>   <span class="number">70</span>   <span class="number">60</span>   NA</span><br><span class="line"><span class="number">13</span>   <span class="number">65</span>   <span class="number">45</span>   NA</span><br><span class="line"><span class="number">14</span>   <span class="number">45</span>   <span class="number">60</span>   NA</span><br><span class="line"><span class="number">15</span>   <span class="number">50</span>   <span class="number">30</span>   NA</span><br></pre></td></tr></table></figure>
+<p>然后就可以顺利地读入了，而且也可以顺利地用gather函数来整理成长数据。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">gather</span><span class="params">(test3,key = <span class="string">"different_med"</span>, value = <span class="string">"weight"</span>, med1,med2,med3)</span></span></span><br></pre></td></tr></table></figure>
+<p>会发现NA还是存在，但我们同样可以设置一个参数</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gather(test3,<span class="attr">key</span> = <span class="string">"different_med"</span>, <span class="attr">value</span> = <span class="string">"weight"</span>, med1,med2,med3,na.<span class="attr">rm</span> = T)</span><br></pre></td></tr></table></figure>
+<p>这样，就顺利地转换成我们需要的格式了。</p>
+<h2 id="基本包转换">基本包转换</h2>
+<p>其实，宽数据到长数据的转换，不一定需要特殊的包的函数，也可以用最基本的方法。尽管最基本的方法有些麻烦，但对于提高自己的数据转换能力还是很有帮助的。</p>
+<h3 id="rbind和cbind">rbind和cbind</h3>
+<p>在使用基本函数转换前，我们先来介绍两个我们以后可能会用到的函数，<code>rbind</code> 和 <code>cbind</code>。rbind是纵向合并，cbind是横向合并。具体操作我们来看一个例子</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&gt; data1 &lt;- <span class="meta">data</span>.frame(<span class="built_in">A1</span> = sample(<span class="number">1</span>:<span class="number">10</span>,<span class="number">3</span>),</span><br><span class="line">+                     <span class="built_in">A2</span> = sample(<span class="number">1</span>:<span class="number">10</span>,<span class="number">3</span>),</span><br><span class="line">+                     <span class="built_in">A3</span> = sample(<span class="number">1</span>:<span class="number">10</span>,<span class="number">3</span>))</span><br><span class="line">&gt; data1</span><br><span class="line">  <span class="built_in">A1</span> <span class="built_in">A2</span> <span class="built_in">A3</span></span><br><span class="line"><span class="number">1</span>  <span class="number">3</span>  <span class="number">6</span>  <span class="number">2</span></span><br><span class="line"><span class="number">2</span>  <span class="number">7</span>  <span class="number">9</span>  <span class="number">5</span></span><br><span class="line"><span class="number">3</span>  <span class="number">5</span> <span class="number">10</span>  <span class="number">4</span></span><br><span class="line">&gt; data2 &lt;- <span class="meta">data</span>.frame(<span class="keyword">B1 </span>= sample(<span class="number">10</span>:<span class="number">20</span>,<span class="number">3</span>),</span><br><span class="line">+                     <span class="keyword">B2 </span>= sample(<span class="number">10</span>:<span class="number">20</span>,<span class="number">3</span>),</span><br><span class="line">+                     <span class="keyword">B3 </span>= sample(<span class="number">10</span>:<span class="number">20</span>,<span class="number">3</span>))</span><br><span class="line">&gt; data2</span><br><span class="line">  <span class="keyword">B1 </span><span class="keyword">B2 </span><span class="keyword">B3</span></span><br><span class="line"><span class="keyword">1 </span><span class="number">15</span> <span class="number">17</span> <span class="number">14</span></span><br><span class="line"><span class="number">2</span> <span class="number">13</span> <span class="number">14</span> <span class="number">11</span></span><br><span class="line"><span class="number">3</span> <span class="number">17</span> <span class="number">15</span> <span class="number">12</span></span><br><span class="line"></span><br><span class="line">&gt; rbind(data1,data2)</span><br><span class="line"><span class="symbol">Error</span> in match.names(clabs, names(xi)) : </span><br><span class="line">  names do not match previous names</span><br><span class="line">&gt; cbind(data1,data2)</span><br><span class="line">  <span class="built_in">A1</span> <span class="built_in">A2</span> <span class="built_in">A3</span> <span class="keyword">B1 </span><span class="keyword">B2 </span><span class="keyword">B3</span></span><br><span class="line"><span class="keyword">1 </span> <span class="number">3</span>  <span class="number">6</span>  <span class="number">2</span> <span class="number">15</span> <span class="number">17</span> <span class="number">14</span></span><br><span class="line"><span class="number">2</span>  <span class="number">7</span>  <span class="number">9</span>  <span class="number">5</span> <span class="number">13</span> <span class="number">14</span> <span class="number">11</span></span><br><span class="line"><span class="number">3</span>  <span class="number">5</span> <span class="number">10</span>  <span class="number">4</span> <span class="number">17</span> <span class="number">15</span> <span class="number">12</span></span><br></pre></td></tr></table></figure>
+<p>可以看到rbind需要两个数据框有同样的变量（同样的列名），cbind则需要两个数据框的行数是一样的。</p>
+<p>rbind尽管需要两个数据框有同样的变量，但顺序不一定要一样，比如</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&gt; data3 &lt;- data.frame(A1 = sample(10:20,3),</span><br><span class="line">+                     A3 = sample(10:20,3),</span><br><span class="line">+                     A2 = sample(10:20,3))</span><br><span class="line">&gt; data3</span><br><span class="line">  A1 A3 A2</span><br><span class="line">1<span class="number"> 10 </span>12 14</span><br><span class="line">2<span class="number"> 11 </span>20 20</span><br><span class="line">3<span class="number"> 15 </span>14 19</span><br><span class="line">&gt; rbind(data1,data3)</span><br><span class="line">  A1 A2 A3</span><br><span class="line">1 <span class="number"> 3 </span><span class="number"> 6 </span> 2</span><br><span class="line">2 <span class="number"> 7 </span><span class="number"> 9 </span> 5</span><br><span class="line">3 <span class="number"> 5 </span>10  4</span><br><span class="line">4<span class="number"> 10 </span>14 12</span><br><span class="line">5<span class="number"> 11 </span>20 20</span><br><span class="line">6<span class="number"> 15 </span>19 14</span><br></pre></td></tr></table></figure>
+<p>这里data1和data3的列名是一样的，但顺序是不一样的，但rbind还是可以合并。</p>
+<blockquote>
+<p>关于rbind和cbind，《R语言实战》4.9也有提到，大家可以去看看</p>
+</blockquote>
+<h3 id="数据转换">数据转换</h3>
+<p>介绍完了rbind和cbind，我们就可以来转换数据框了。我用test2做例子</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&gt; test2</span><br><span class="line">   <span class="section">control</span>   low middle  high</span><br><span class="line"><span class="number">1</span>    <span class="number">20.79</span> <span class="number">22.22</span>  <span class="number">28.56</span> <span class="number">31.93</span></span><br><span class="line"><span class="number">2</span>    <span class="number">22.91</span> <span class="number">24.74</span>  <span class="number">28.67</span> <span class="number">37.94</span></span><br><span class="line"><span class="number">3</span>    <span class="number">27.21</span> <span class="number">21.53</span>  <span class="number">25.28</span> <span class="number">39.76</span></span><br><span class="line"><span class="number">4</span>    <span class="number">19.34</span> <span class="number">19.66</span>  <span class="number">30.28</span> <span class="number">27.94</span></span><br><span class="line"><span class="number">5</span>    <span class="number">17.85</span> <span class="number">25.89</span>  <span class="number">23.13</span> <span class="number">29.65</span></span><br><span class="line"><span class="number">6</span>    <span class="number">23.79</span> <span class="number">29.10</span>  <span class="number">23.47</span> <span class="number">34.23</span></span><br><span class="line"><span class="number">7</span>    <span class="number">22.60</span> <span class="number">18.93</span>  <span class="number">28.88</span> <span class="number">32.63</span></span><br><span class="line"><span class="number">8</span>    <span class="number">18.53</span> <span class="number">18.64</span>  <span class="number">29.62</span> <span class="number">29.13</span></span><br><span class="line"><span class="number">9</span>    <span class="number">23.23</span> <span class="number">26.39</span>  <span class="number">24.82</span> <span class="number">39.62</span></span><br><span class="line"><span class="number">10</span>   <span class="number">20.14</span> <span class="number">25.49</span>  <span class="number">34.64</span> <span class="number">36.15</span></span><br><span class="line"><span class="number">11</span>   <span class="number">26.71</span> <span class="number">20.43</span>  <span class="number">22.29</span> <span class="number">28.85</span></span><br><span class="line"><span class="number">12</span>   <span class="number">19.36</span> <span class="number">22.69</span>  <span class="number">29.22</span> <span class="number">24.07</span></span><br><span class="line"><span class="number">13</span>   <span class="number">17.22</span> <span class="number">29.67</span>  <span class="number">25.63</span> <span class="number">29.29</span></span><br><span class="line"><span class="number">14</span>   <span class="number">24.13</span> <span class="number">20.36</span>  <span class="number">35.12</span> <span class="number">35.24</span></span><br><span class="line"><span class="number">15</span>   <span class="number">25.85</span> <span class="number">22.74</span>  <span class="number">32.32</span> <span class="number">36.13</span></span><br></pre></td></tr></table></figure>
+<p>宽数据转换成长数据，本质上就像堆积木一样。你把每一列的数据拿出来，变成一块积木，然后你就一层层地堆起积木，最后就形成了长数据。是不是感觉特别像rbind干的事情？没错，我们这里就用rbind来构建长数据。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">control &lt;- <span class="built_in">data</span>.frame(Treatment_dose = rep(<span class="string">"control"</span>,<span class="number">15</span>),</span><br><span class="line">                      survive_time = test2$control)</span><br><span class="line">low &lt;- <span class="built_in">data</span>.frame(Treatment_dose = rep(<span class="string">"low"</span>,<span class="number">15</span>),</span><br><span class="line">                      survive_time = test2$low)</span><br><span class="line">middle &lt;- <span class="built_in">data</span>.frame(Treatment_dose = rep(<span class="string">"middle"</span>,<span class="number">15</span>),</span><br><span class="line">                      survive_time = test2$middle)</span><br><span class="line">high &lt;- <span class="built_in">data</span>.frame(Treatment_dose = rep(<span class="string">"high"</span>,<span class="number">15</span>),</span><br><span class="line">                      survive_time = test2$high)</span><br><span class="line">rbind(control,low,middle,high)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>大家可能是一遍遍地打了以上的代码，机智的小伙伴可能还是复制粘贴的，然后把变量名改一下。不过，实际上我们可以用函数来解决这些重复操作的问题。函数这一部分就留待后面讲了。</p>
+</blockquote>
+<h2 id="双因素anova的数据格式整理">双因素ANOVA的数据格式整理</h2>
+<p>在第五次生统作业的最后一题，我们需要考虑的是双因素ANOVA分析。但word文件里面的表格却不是一个双因素ANOVA的格式。让我们来看看如何利用上面讲过的内容，把它变成一个能让 <code>aov</code> 读入的双因素AONVA。</p>
+<p>首先复制粘贴A1，A2，A3三列数据到txt文件中，然后读入R中。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; test4 &lt;- read.table(<span class="string">"rawdata/test4.txt"</span>,header = T)</span><br><span class="line">&gt; head(test4)</span><br><span class="line">     A1    A2    A3</span><br><span class="line"><span class="number">1</span> <span class="number">282.1</span> <span class="number">296.7</span> <span class="number">300.1</span></span><br><span class="line"><span class="number">2</span> <span class="number">264.2</span> <span class="number">318.0</span> <span class="number">307.5</span></span><br><span class="line"><span class="number">3</span> <span class="number">274.2</span> <span class="number">295.3</span> <span class="number">294.2</span></span><br><span class="line"><span class="number">4</span> <span class="number">276.4</span> <span class="number">292.8</span> <span class="number">312.0</span></span><br><span class="line"><span class="number">5</span> <span class="number">283.7</span> <span class="number">304.5</span> <span class="number">300.2</span></span><br><span class="line"><span class="number">6</span> <span class="number">288.0</span> <span class="number">305.9</span> <span class="number">292.6</span></span><br></pre></td></tr></table></figure>
+<p>然后转换成长数据框</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">test4_long</span> &lt;- gather(test4, key = temperature, value = weight, <span class="built_in">A1</span>, <span class="built_in">A2</span>, <span class="built_in">A3</span>)</span><br></pre></td></tr></table></figure>
+<p>但这样还不够，这里只有单因素，即饲养温度这一列的信息，还没有饲料的信息。所以我们要自己加上一列饲料的信息。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">feed &lt;- c(rep(<span class="string">"B1"</span>,<span class="number">10</span>),rep(<span class="string">"B2"</span>,<span class="number">10</span>))</span><br><span class="line">test4_data &lt;- cbind(feed,test4_long)</span><br><span class="line">head(test4_data)</span><br><span class="line"></span><br><span class="line">&gt; head(test4_data)</span><br><span class="line">  feed temperature weight</span><br><span class="line"><span class="number">1</span>   B1          A1  <span class="number">282.1</span></span><br><span class="line"><span class="number">2</span>   B1          A1  <span class="number">264.2</span></span><br><span class="line"><span class="number">3</span>   B1          A1  <span class="number">274.2</span></span><br><span class="line"><span class="number">4</span>   B1          A1  <span class="number">276.4</span></span><br><span class="line"><span class="number">5</span>   B1          A1  <span class="number">283.7</span></span><br><span class="line"><span class="number">6</span>   B1          A1  <span class="number">288.0</span></span><br></pre></td></tr></table></figure>
+<p>这样就变成了双因素的ANOVA格式，可以顺利让<code>aov</code>函数读入了。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&gt; test4_aov &lt;- aov(weight ~ feed * temperature, data = test4_data)</span></span><br><span class="line"><span class="string">&gt; summary(test4_aov)</span></span><br><span class="line"><span class="string">                 Df Sum Sq Mean Sq F value   Pr(&gt;F)    </span></span><br><span class="line"><span class="string">feed              1    127     127   1.589    0.213    </span></span><br><span class="line"><span class="string">temperature       2   9080    4540  56.809 5.22e-14 ***</span></span><br><span class="line"><span class="string"></span><span class="attr">feed:</span><span class="string">temperature</span>  <span class="number">2</span>     <span class="number">17</span>       <span class="number">9</span>   <span class="number">0.108</span>    <span class="number">0.897</span>    </span><br><span class="line"><span class="string">Residuals</span>        <span class="number">54</span>   <span class="number">4316</span>      <span class="number">80</span>                     </span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="string">Signif.</span> <span class="attr">codes:</span>  <span class="number">0</span> <span class="string">‘***’</span> <span class="number">0.001</span> <span class="string">‘**’</span> <span class="number">0.01</span> <span class="string">‘*’</span> <span class="number">0.05</span> <span class="string">‘.’</span> <span class="number">0.1</span> <span class="string">‘</span> <span class="string">’</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/R/" rel="tag"># R</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/05/11/给女朋友写的生统资料-Part5/" rel="next" title="给女朋友写的生统资料_Part5">
+                  <i class="fa fa-chevron-left"></i> 给女朋友写的生统资料_Part5
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/08/31/给女朋友写的生统资料-Part7/" rel="prev" title="给女朋友写的生统资料_Part7">
+                  给女朋友写的生统资料_Part7 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#gather函数转换"><span class="nav-number">1.</span> <span class="nav-text">gather函数转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本包转换"><span class="nav-number">2.</span> <span class="nav-text">基本包转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rbind和cbind"><span class="nav-number">2.1.</span> <span class="nav-text">rbind和cbind</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据转换"><span class="nav-number">2.2.</span> <span class="nav-text">数据转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#双因素anova的数据格式整理"><span class="nav-number">3.</span> <span class="nav-text">双因素ANOVA的数据格式整理</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Shawn</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shawn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>
