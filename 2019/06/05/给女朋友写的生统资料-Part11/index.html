@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="中心极限定理 中心极限定理 假设我们有一个总体，我们从总体中取出一个大小为5的样本。我们可以利用这个样本均值、方差来估计总体的均值，方差。而如果我们不断地从总体中取出 n=5 的样本，然后每次都计算抽取样本的均值，就可以形成一个样本均值的抽样分布。">
+<meta name="keywords" content="Statistics">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给女朋友写的生统资料_Part11">
+<meta property="og:url" content="http://yoursite.com/2019/06/05/给女朋友写的生统资料-Part11/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="中心极限定理 中心极限定理 假设我们有一个总体，我们从总体中取出一个大小为5的样本。我们可以利用这个样本均值、方差来估计总体的均值，方差。而如果我们不断地从总体中取出 n=5 的样本，然后每次都计算抽取样本的均值，就可以形成一个样本均值的抽样分布。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/Biostat_for_GF_Part11_central%20limit%20theory.png">
+<meta property="og:image" content="http://yoursite.com/images/Biostat_for_GF_Part11_confidence%20interval.png">
+<meta property="og:updated_time" content="2019-09-03T04:27:12.190Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="给女朋友写的生统资料_Part11">
+<meta name="twitter:description" content="中心极限定理 中心极限定理 假设我们有一个总体，我们从总体中取出一个大小为5的样本。我们可以利用这个样本均值、方差来估计总体的均值，方差。而如果我们不断地从总体中取出 n=5 的样本，然后每次都计算抽取样本的均值，就可以形成一个样本均值的抽样分布。">
+<meta name="twitter:image" content="http://yoursite.com/images/Biostat_for_GF_Part11_central%20limit%20theory.png">
+  <link rel="canonical" href="http://yoursite.com/2019/06/05/给女朋友写的生统资料-Part11/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>给女朋友写的生统资料_Part11 | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/05/给女朋友写的生统资料-Part11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Just For Daisy">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">给女朋友写的生统资料_Part11
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-05 21:23:04" itemprop="dateCreated datePublished" datetime="2019-06-05T21:23:04+08:00">2019-06-05</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-03 12:27:12" itemprop="dateModified" datetime="2019-09-03T12:27:12+08:00">2019-09-03</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生物医学统计课/" itemprop="url" rel="index"><span itemprop="name">生物医学统计课</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="中心极限定理">中心极限定理</h2>
+<h3 id="中心极限定理-1">中心极限定理</h3>
+<p>假设我们有一个总体，我们从总体中取出一个大小为<strong>5</strong>的样本。我们可以利用这个样本均值、方差来估计总体的均值，方差。而如果我们不断地从总体中取出 n=5 的样本，然后每次都计算抽取样本的均值，就可以形成一个<strong>样本均值的抽样分布</strong>。</p>
+<a id="more"></a>
+<p>中心极限定理告诉我们，如果<strong>总体是呈现正态分布</strong>，或者<strong>样本的大小</strong>足够大，那么<strong>样本均值的抽样分布</strong>就会<strong>呈现正态分布</strong>。</p>
+<p>可以见下图（图来源于Y叔的统计学笔记，文末给出链接）</p>
+<p><img src="/images/Biostat_for_GF_Part11_central%20limit%20theory.png"></p>
+<p>可以看到，如果样本量足够大，哪怕总体是来源于一个再疯狂的分布，样本均值的抽样分布都会呈现一个正态分布，但如果样本量不够，则总体必须是正态分布，样本均值的抽样分布才是正态分布的。</p>
+<blockquote>
+<p>多大算大呢，一般的thumb认为是30。当然，这也只是个经验。具体的大小还得依赖于你总体的分布。如果你总体的分布很像正态分布，自然样本量小点也可以达到效果。</p>
+</blockquote>
+<h3 id="标准误">标准误</h3>
+<p>对于单个样本而言，比如说我们取了5株苗。我们就会用标准差（standard deviation, SD）来衡量样本的离散程度。但对于我们上面提到的多个均值得到的分布（样本均值的抽样分布），我们也需要衡量分布的离散程度，这时候我们就会用<strong>标准误（Stand error，SE 或者说 standard error of the means，SEM）</strong>来衡量。样本均值抽样分布的标准误计算为： <span class="math display">\[
+\sigma_\bar{x}=SE=\frac{\sigma}{\sqrt{n}}
+\]</span> 即用总体的标准差除以样本量的平方根。但通常来说，我们是不知道总体的方差的，所以通常会用样本的方差来估计，那么 <span class="math display">\[
+s_{\bar{x}}=\frac{s}{\sqrt{n}}
+\]</span></p>
+<h2 id="置信区间confidence-interval">置信区间（confidence interval）</h2>
+<p>通常来说，我们会用总体参数的<strong>点估计</strong>（比如参数的均值）来代表我们对总体参数的估计。但实际上，度量一个点估计的精读更直观的方法就是给出未知参数的一个区间。我们通常会设定一个 <span class="math inline">\(\alpha\)</span> 值，把 <span class="math inline">\(1-\alpha\)</span> 叫做置信水平。比如我们通常会设置 95% 的置信水平。置信水平的频率解释就是，我们利用我们构建置信区间的方法，不断地重复构建置信区间，比如说构建1000次。这样我们就得到了1000个置信区间，每次得到的区间都是不一样的。<strong>置信区间是否包含我们总体参数（即真值）的结果是一个二元的，即包含或者不包含</strong>。这样最终差不多就会有950个置信区间包含了我们的真值，另外50个不包含真值。</p>
+<p>可以看下面的图，每根线都是我们构建的置信区间。绿线代表包含了真值，红线代表没有包含真值。（图片来自：Data Analysis for the Life Sciences）</p>
+<p><img src="/images/Biostat_for_GF_Part11_confidence%20interval.png"></p>
+<h3 id="均值的置信区间">均值的置信区间</h3>
+<p>先放一段我<strong>个人认为</strong>的均值置信区间构建的原理，不保证正确。可以不看直接看后面置信区间的公式（公式考试的时候好像还是要写的）：</p>
+<p>我们设置95%为置信水平。我们从<strong>总体</strong>中得到的了一个<strong>样本均值</strong>，这个样本均值是样本均值抽样分布（假设是正态分布）的一个点。我们可以认为这个样本均值点应该是在距离真值95%范围内的。双侧95%的那个阈值点就是1.96，所以样本均值距离真值应该是1.96个标准误之内的 <span class="math display">\[
+-1.96\le\frac{\mu-\bar{x}}{\sigma_{x}}\le1.96
+\]</span></p>
+<p><span class="math display">\[
+-1.96{\sigma_{x}} \le \mu-\bar{x} \le 1.96{\sigma_{x}}
+\]</span></p>
+<p><span class="math display">\[
+-1.96{\sigma_{x}}+\bar{x} \le \mu \le 1.96{\sigma_{x}}+\bar{x}
+\]</span></p>
+<p>现在讲公式：</p>
+<p><strong>样本均值分布呈现正态分布的情况下</strong>，可以使用正态分布和t分布来估计置信区间，用哪种方法，取决于总体参数 <em>σ</em> 是否已知。</p>
+<p>知道总体标准差的情况下，我们使用正态分布 <span class="math display">\[
+(\bar{x}-z_{\alpha/2}\frac{\sigma}{\sqrt{n}}) &lt; \mu &lt; (\bar{x}+z_{\alpha/2}\frac{\sigma}{\sqrt{n}})
+\]</span> <span class="math inline">\(Z_{\alpha/2}\)</span>就是所谓的<strong>critical value</strong>，跟你设置的置信水平有关系，比如你是95%的置信水平，双侧的话，就是一边在2.5%，一边在97.5%。那么就是-1.96和1.96了。</p>
+<p>用R算critical value就是应用我们之前讲过的dpqr中的q了。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="selector-tag">qnorm</span>(0<span class="selector-class">.975</span>)</span><br><span class="line"><span class="selector-attr">[1]</span> 1<span class="selector-class">.959964</span></span><br><span class="line">&gt; <span class="selector-tag">qnorm</span>(0<span class="selector-class">.025</span>)</span><br><span class="line"><span class="selector-attr">[1]</span> <span class="selector-tag">-1</span><span class="selector-class">.959964</span></span><br></pre></td></tr></table></figure>
+<p>不知道总体标准差的情况下，我们使用 t 分布 <span class="math display">\[
+(\bar{x}-t_{\alpha/2}\frac{s}{\sqrt{n}}) &lt; \mu &lt; (\bar{x}+t_{\alpha/2}\frac{s}{\sqrt{n}})
+\]</span></p>
+<blockquote>
+<p>之所以t分布的使用要满足样本均值分布呈现正态分布，是因为t分布的建立要求之一就是正态分布。具体可以去看概率论与数理统计的书。如果不满足这个条件，就不能使用t分布。</p>
+</blockquote>
+<p>用 t 分布来计算置信区间的话，可以用R的t.test，会直接输出置信区间。</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="class"><span class="keyword">data</span> &lt;- rnorm(20)</span></span><br><span class="line"></span><br><span class="line"><span class="meta"># 改下置信区间为90%</span></span><br><span class="line">&gt; t.test(<span class="class"><span class="keyword">data</span>,conf.level = 0.9)</span></span><br><span class="line"></span><br><span class="line">	<span class="type">One</span> <span class="type">Sample</span> t-test</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">data</span>:  <span class="keyword">data</span></span></span><br><span class="line"><span class="title">t</span> = <span class="number">-0.59555</span>, df = <span class="number">19</span>, p-value = <span class="number">0.5585</span></span><br><span class="line"><span class="title">alternative</span> hypothesis: true mean is not equal to <span class="number">0</span></span><br><span class="line"><span class="number">90</span> percent confidence interval:</span><br><span class="line"> <span class="number">-0.5063434</span>  <span class="number">0.2469069</span></span><br><span class="line"><span class="title">sample</span> estimates:</span><br><span class="line"> mean <span class="keyword">of</span> x </span><br><span class="line"><span class="number">-0.1297183</span></span><br></pre></td></tr></table></figure>
+<p>有可能还会要你算<strong>边际误差（margin of error，E，也称误差幅度）</strong></p>
+<p>边际误差就是所谓的 <span class="math display">\[
+E=z_{\alpha/2}\sigma_{\bar{x}}=z_{\alpha/2}\frac{\sigma}{\sqrt{n}}
+\]</span></p>
+<p>其实就是用来构建置信区间的。</p>
+<p>当然，如果总体标准差不知道的话，就用样本标准差代替，分布变成t分布。 <span class="math display">\[
+E=t_{\alpha/2}\frac{s}{\sqrt{n}}
+\]</span></p>
+<p>可以看到，如果想要降低E，即缩短置信区间，最稳妥的方法就是增大n。即提高样本容量。</p>
+<h3 id="比例的置信区间">比例的置信区间</h3>
+<p>这部分来自于Y叔的统计笔记。我感觉写的很直观，就直接放了。</p>
+<p>比例的置信区间也差不多，公式在下面 <span class="math display">\[
+(\hat{p} - E) &lt; p &lt; (\hat{p} + E)
+\]</span> 其中 E 是边际误差，<span class="math inline">\(\hat{p}\)</span> 是算出来的比例，而p是总体比例。E通过下面的式子 <span class="math display">\[
+E = z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}
+\]</span> 因为这种情况是符合二项分布的，而n有比较大，所以用正态分布来估计。</p>
+<p>比如我们检测了829个成年人，51%反对修铁路。问总体上有大约多少是反对修铁路的。</p>
+<p>首先，我们先检查这个二项分布是否符合正态分布的近似。发现，<span class="math inline">\(n\hat{p}=422.79 &gt; 5\)</span>，<span class="math inline">\(n\hat{q}=406.21 &gt; 5\)</span>。的确是可以用来近似的。</p>
+<p>然后就计算 E： <span class="math display">\[
+E =1.96\sqrt{\frac{0.51*0.49}{829}}
+\]</span> 就可以算出置信区间了。</p>
+<h3 id="方差和标准差的置信区间">方差和标准差的置信区间</h3>
+<p>我们如果是拿样本的标准差来估计总体的标准差的置信区间，就要用到卡方分布。</p>
+<p>假设我们从正态分布的总体中每次抽出样本量为n的样本，计算样本的方差<span class="math inline">\(s^2\)</span>。那么每次计算得到的<span class="math inline">\(\frac{(n-1)s^2}{\sigma^2}\)</span>就会符合卡方分布。 <span class="math display">\[
+\chi^2 = \frac{(n-1)s^2}{\sigma^2}
+\]</span> 因为卡方是不对称分布，所以置信区间也是不对称的，所以需要分别找出左侧和右侧的临界值。</p>
+<p>假设我们抽取的n是100，那么自由度（degree of freedom）是99，我们要计算95%的置信区间，需要分别计算左侧0.025和右侧0.025的临界值：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; qchis<span class="string">q(0.975,99)</span></span><br><span class="line">[<span class="number">1</span>] <span class="number">128.422</span></span><br><span class="line">&gt; qchis<span class="string">q(0.025,99)</span></span><br><span class="line">[<span class="number">1</span>] <span class="number">73.36108</span></span><br></pre></td></tr></table></figure>
+<p>这两个值被称为卡方左右值，<span class="math inline">\(\chi_{L}^2\)</span>和<span class="math inline">\(\chi_{R}^2\)</span>。那么标准差置信区间的计算就是 <span class="math display">\[
+\sqrt{\frac{(n-1)s^2}{\chi_{R}^2}} &lt; \sigma &lt; \sqrt{\frac{(n-1)s^2}{\chi_{L}^2}}
+\]</span></p>
+<p><strong>参考资料</strong></p>
+<p><a href="https://guangchuangyu.github.io/statistics_notes/section-4.html#section-4.3.2" target="_blank" rel="noopener">Y叔的统计笔记</a></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Statistics/" rel="tag"># Statistics</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/06/03/给女朋友写的生统资料-Part10/" rel="next" title="给女朋友写的生统资料_Part10">
+                  <i class="fa fa-chevron-left"></i> 给女朋友写的生统资料_Part10
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/06/05/给女朋友写的生统资料-Part12/" rel="prev" title="给女朋友写的生统资料_Part12">
+                  给女朋友写的生统资料_Part12 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#中心极限定理"><span class="nav-number">1.</span> <span class="nav-text">中心极限定理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#中心极限定理-1"><span class="nav-number">1.1.</span> <span class="nav-text">中心极限定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标准误"><span class="nav-number">1.2.</span> <span class="nav-text">标准误</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#置信区间confidence-interval"><span class="nav-number">2.</span> <span class="nav-text">置信区间（confidence interval）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#均值的置信区间"><span class="nav-number">2.1.</span> <span class="nav-text">均值的置信区间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#比例的置信区间"><span class="nav-number">2.2.</span> <span class="nav-text">比例的置信区间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方差和标准差的置信区间"><span class="nav-number">2.3.</span> <span class="nav-text">方差和标准差的置信区间</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Just For Daisy</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Just For Daisy</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>
