@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="逻辑斯蒂回归 我们之前提到的线性回归是利用X来预测Y，Y是连续型的数值变量。但有时候Y并不是连续型的变量，而是一种离散型的变量。或者说，更准确来说，是一种定类数据。举个《统计学习导论》书上的例子，假设现在要通过一个急救室病人的症状来预测其患病情况。我们有三种可能的诊断：中风，服药过量，癫痫发作。我们分别用数字来表示这种诊断">
+<meta name="keywords" content="Statistics">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给女朋友写的生统资料_Part17">
+<meta property="og:url" content="http://yoursite.com/2019/06/16/给女朋友写的生统资料-Part17/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="逻辑斯蒂回归 我们之前提到的线性回归是利用X来预测Y，Y是连续型的数值变量。但有时候Y并不是连续型的变量，而是一种离散型的变量。或者说，更准确来说，是一种定类数据。举个《统计学习导论》书上的例子，假设现在要通过一个急救室病人的症状来预测其患病情况。我们有三种可能的诊断：中风，服药过量，癫痫发作。我们分别用数字来表示这种诊断">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-06T14:46:58.114Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="给女朋友写的生统资料_Part17">
+<meta name="twitter:description" content="逻辑斯蒂回归 我们之前提到的线性回归是利用X来预测Y，Y是连续型的数值变量。但有时候Y并不是连续型的变量，而是一种离散型的变量。或者说，更准确来说，是一种定类数据。举个《统计学习导论》书上的例子，假设现在要通过一个急救室病人的症状来预测其患病情况。我们有三种可能的诊断：中风，服药过量，癫痫发作。我们分别用数字来表示这种诊断">
+  <link rel="canonical" href="http://yoursite.com/2019/06/16/给女朋友写的生统资料-Part17/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>给女朋友写的生统资料_Part17 | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/16/给女朋友写的生统资料-Part17/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Just For Daisy">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">给女朋友写的生统资料_Part17
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-16 21:23:36" itemprop="dateCreated datePublished" datetime="2019-06-16T21:23:36+08:00">2019-06-16</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-06 22:46:58" itemprop="dateModified" datetime="2019-09-06T22:46:58+08:00">2019-09-06</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生物医学统计课/" itemprop="url" rel="index"><span itemprop="name">生物医学统计课</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="逻辑斯蒂回归">逻辑斯蒂回归</h2>
+<p>我们之前提到的线性回归是利用X来预测Y，Y是连续型的数值变量。但有时候Y并不是连续型的变量，而是一种<strong>离散型的变量</strong>。或者说，更准确来说，是一种<strong>定类数据</strong>。举个《统计学习导论》书上的例子，假设现在要通过一个急救室病人的症状来预测其患病情况。我们有三种可能的诊断：中风，服药过量，癫痫发作。我们分别用数字来表示这种诊断</p>
+<a id="more"></a>
+<ul>
+<li>中风：1</li>
+<li>服药过量：2</li>
+<li>癫痫发作：3</li>
+</ul>
+<p>这里的诊断结果就是Y，症状就是X。我们也可以用前面线性回归来做，但这样就是默认其实是一个有序的输出。但实际上，中风，服药过量，癫痫发作这三类数据虽然我们用数字来代表，但其实并不是有顺序之分的，所以用线性回归并不适合。所以，我们就可以考虑用logistic回归来解决这种<strong>分类问题</strong>。</p>
+<blockquote>
+<p>我之所以说<em>Y是一种离散型的变量，更准确来说是一种定类数据</em>。是因为还有离散型变量里面还有一类数据，叫做定序数据。其虽然是离散的，但数据之间是有程度之分的，比如轻微、严重、特别严重等等。这时候，我们既不能用线性回归，也不能用logistic回归，我们应该用的是ordinal regression（定序回归）。当然，这部分绝对不会考。。。感兴趣的可以先去看看我之前推荐过的<strong>说人话的统计学</strong></p>
+<p>因为通常我们遇到的一般都是<strong>二元的响应变量，即预测结果只有两类（下雨不下雨，患病不患病）</strong>，包括课上讲的也是二元的，所以后面我提到的都是二元的。</p>
+</blockquote>
+<p>在做logistic回归的时候，我们也会将我们最后的二元结果用数字来表示，一个代表1，一个代表0。我们最后预测能得到的是<strong>y=1 的概率！</strong></p>
+<h3 id="logistic模型">logistic模型</h3>
+<p><strong>我们来看下logistic的模型</strong> <span class="math display">\[
+ln(\frac{p}{1-p}) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdot\cdot\cdot + \beta_p X_p + \epsilon
+\]</span> 其中 <strong>p 代表 y = 1 的概率</strong>，x 代表了不同的自变量，<span class="math inline">\(\epsilon\)</span>表示了误差项。与线性回归模型对比，等式右边完全相同，实际上逻辑回归模型也是广义上的线性模型。而等式的左边形式更复杂了，引入了一些非线性的变换。大家可以看到，我们这里等式左边变成了一个对数，<strong>我们常称为对数发生比（log-odd）或分对数（logit）</strong>。对数里面的<span class="math inline">\(\frac{p}{1-p}\)</span>就是<strong>发生比（odd）</strong>，取值范围可以从0到正无穷。</p>
+<p>然后我们估计回归参数的话，就变成 <span class="math display">\[
+ln(\frac{\hat{p}}{1-\hat{p}}) = \hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \cdot\cdot\cdot + \hat{\beta}_p x_p
+\]</span></p>
+<p>有时候，也会将logistic的模型写成（我不太喜欢这么写，但有时候看助教答案是这么写的） <span class="math display">\[
+\hat{y}=\hat{p}=\frac{e^{\hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \cdot\cdot\cdot + \hat{\beta}_p x_p}}{1+e^{\hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \cdot\cdot\cdot + \hat{\beta}_p x_p}}
+\]</span></p>
+<p><span class="math display">\[
+=\frac{1}{1+e^{-({\hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \cdot\cdot\cdot + \hat{\beta}_p x_p})}}
+\]</span></p>
+<blockquote>
+<p>这里的y就直接表示 y=1 的概率了。我感觉不太直观……</p>
+</blockquote>
+<p>下面是logistic回归的一些tip</p>
+<ul>
+<li><p>发生比（odd）这个概念估计是会考到的。</p></li>
+<li><p>因为我们通常来说，会把成功写作1，失败写作0。那么发生比就是成功与失败的比例，有时候就写作 odds of success。</p></li>
+<li><p>谁是0，谁是1的设置其实是很重要的，如果设置反了，就变成预测对立的概率了。这点我在后面例子的时候再详细地讲。</p></li>
+<li>logistic回归的模型显著性和参数显著性我就不讲了，一来我不太懂╮（╯＿╰）╭，二来老师上课也没怎么提。</li>
+<li><p>对于我们前面提到的逻辑斯蒂回归模型而言，系数的意思（比如<span class="math inline">\(\beta_1\)</span>）代表的是可以解释为在所有其他预测变量保持不变的情况下，<span class="math inline">\(X_1\)</span>增加一个单位，<strong>对数发生比</strong>的变化为<span class="math inline">\(\beta_1\)</span>。</p></li>
+</ul>
+<h2 id="r语言的实现">R语言的实现</h2>
+<p>用两个作业里面的题目举个例子：</p>
+<h3 id="题目1">题目1</h3>
+<p>数据文件“Drivers.csv”为对45名司机的调查结果，其中四个变量的含义为：</p>
+<ol type="1">
+<li>x1：表示视力状况，它是一个分类变量，1表示好，0表示有问题；</li>
+<li>x2：年龄，数值型；</li>
+<li>x3：驾车教育，它也是一个分类变量，1表示参加过驾车教育，0表示没有；</li>
+<li>y：一个分类型输出变量，表示去年是否出过事故，1表示出过事故，0表示没有；</li>
+</ol>
+<blockquote>
+<p>把这部分数据称为test5，已经放入Part0</p>
+</blockquote>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 读取并整理数据</span><br><span class="line">test5 &lt;- read.table(<span class="string">"rawdata/homework-6.5-Drivers.csv"</span>,header = T,sep = <span class="string">","</span>)</span><br><span class="line">colnames(test5) &lt;- c(<span class="string">"eyesight"</span>,<span class="string">"age"</span>,<span class="string">"eduction"</span>,<span class="string">"accident"</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; head(test5)</span><br><span class="line">  eyesight age eduction accident</span><br><span class="line"><span class="number">1</span>        <span class="number">1</span>  <span class="number">17</span>        <span class="number">1</span>        <span class="number">1</span></span><br><span class="line"><span class="number">2</span>        <span class="number">1</span>  <span class="number">44</span>        <span class="number">0</span>        <span class="number">0</span></span><br><span class="line"><span class="number">3</span>        <span class="number">1</span>  <span class="number">48</span>        <span class="number">1</span>        <span class="number">0</span></span><br><span class="line"><span class="number">4</span>        <span class="number">1</span>  <span class="number">55</span>        <span class="number">0</span>        <span class="number">0</span></span><br><span class="line"><span class="number">5</span>        <span class="number">1</span>  <span class="number">75</span>        <span class="number">1</span>        <span class="number">1</span></span><br><span class="line"><span class="number">6</span>        <span class="number">0</span>  <span class="number">35</span>        <span class="number">0</span>        <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>1.请在R语言中调用logistic回归函数，计算视力状况、年龄、驾车教育与是否发生事故的logistic回归模型，并以“odds=……”的形式写出回归公式。</strong></p>
+<p>R语言里面调用logistic回归函数是用<code>glm</code>函数。glm函数其实是拟合广义线性模型的函数，logistic回归只是其中一种。所以你要加上family=binomial，代表逻辑斯蒂回归</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&gt; test5_logistic &lt;- glm(accident ~ .,data = test5,family = binomial())</span></span><br><span class="line"><span class="string">&gt; summary(test5_logistic)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span><span class="attr">Call:</span></span><br><span class="line"><span class="string">glm(formula</span> <span class="string">=</span> <span class="string">accident</span> <span class="string">~</span> <span class="string">.,</span> <span class="string">family</span> <span class="string">=</span> <span class="string">binomial(),</span> <span class="string">data</span> <span class="string">=</span> <span class="string">test5)</span></span><br><span class="line"></span><br><span class="line"><span class="string">Deviance</span> <span class="attr">Residuals:</span> </span><br><span class="line">    <span class="string">Min</span>       <span class="number">1</span><span class="string">Q</span>   <span class="string">Median</span>       <span class="number">3</span><span class="string">Q</span>      <span class="string">Max</span>  </span><br><span class="line"><span class="bullet">-</span><span class="number">1.5636</span>  <span class="bullet">-0.9131</span>  <span class="bullet">-0.7892</span>   <span class="number">0.9637</span>   <span class="number">1.6000</span>  </span><br><span class="line"></span><br><span class="line"><span class="attr">Coefficients:</span></span><br><span class="line">             <span class="string">Estimate</span> <span class="string">Std.</span> <span class="string">Error</span> <span class="string">z</span> <span class="string">value</span> <span class="string">Pr(&gt;|z|)</span>  </span><br><span class="line"><span class="string">(Intercept)</span>  <span class="number">0.597610</span>   <span class="number">0.894831</span>   <span class="number">0.668</span>   <span class="number">0.5042</span>  </span><br><span class="line"><span class="string">eyesight</span>    <span class="bullet">-1.496084</span>   <span class="number">0.704861</span>  <span class="bullet">-2.123</span>   <span class="number">0.0338</span> <span class="string">*</span></span><br><span class="line"><span class="string">age</span>         <span class="bullet">-0.001595</span>   <span class="number">0.016758</span>  <span class="bullet">-0.095</span>   <span class="number">0.9242</span>  </span><br><span class="line"><span class="string">eduction</span>     <span class="number">0.315865</span>   <span class="number">0.701093</span>   <span class="number">0.451</span>   <span class="number">0.6523</span>  </span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="string">Signif.</span> <span class="attr">codes:</span>  <span class="number">0</span> <span class="string">‘***’</span> <span class="number">0.001</span> <span class="string">‘**’</span> <span class="number">0.01</span> <span class="string">‘*’</span> <span class="number">0.05</span> <span class="string">‘.’</span> <span class="number">0.1</span> <span class="string">‘</span> <span class="string">’</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="string">(Dispersion</span> <span class="string">parameter</span> <span class="string">for</span> <span class="string">binomial</span> <span class="string">family</span> <span class="string">taken</span> <span class="string">to</span> <span class="string">be</span> <span class="number">1</span><span class="string">)</span></span><br><span class="line"></span><br><span class="line">    <span class="literal">Null</span> <span class="attr">deviance:</span> <span class="number">62.183</span>  <span class="string">on</span> <span class="number">44</span>  <span class="string">degrees</span> <span class="string">of</span> <span class="string">freedom</span></span><br><span class="line"><span class="string">Residual</span> <span class="attr">deviance:</span> <span class="number">57.026</span>  <span class="string">on</span> <span class="number">41</span>  <span class="string">degrees</span> <span class="string">of</span> <span class="string">freedom</span></span><br><span class="line"><span class="attr">AIC:</span> <span class="number">65.026</span></span><br><span class="line"></span><br><span class="line"><span class="string">Number</span> <span class="string">of</span> <span class="string">Fisher</span> <span class="string">Scoring</span> <span class="attr">iterations:</span> <span class="number">4</span></span><br></pre></td></tr></table></figure>
+<p>然后我们的logistic回归模型就是 <span class="math display">\[
+ln(\frac{P_{事故}}{1-P_{事故}})=0.5976-1.496X_1-0.0016X_2+0.3159X_3
+\]</span> 但题目要求的是odds的形式，那么我们再改写下 <span class="math display">\[
+\frac{P_{事故}}{1-P_{事故}}=e^{0.5976-1.496X_1-0.0016X_2+0.3159X_3}
+\]</span></p>
+<p><strong>2.指出（1）得到的模型中哪些因素对是否发生事故有显著性影响。如果存在对是否发生事故没有显著性影响的因素，请去除这些因素后重新计算logistic回归模型，并以“p=……”的形式写出回归公式</strong></p>
+<p>我们根据前面结果的p-value，就发现视力是由显著性影响的，其他因素没有显著性影响。</p>
+<p>然后我们去掉这些因素，只留下视力这个因素，再次拟合一个logistic回归模型</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&gt; test5_logistic_reduced &lt;- glm(accident ~ eyesight,data = test5, family = binomial())</span></span><br><span class="line"><span class="string">&gt; summary(test5_logistic_reduced)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span><span class="attr">Call:</span></span><br><span class="line"><span class="string">glm(formula</span> <span class="string">=</span> <span class="string">accident</span> <span class="string">~</span> <span class="string">eyesight,</span> <span class="string">family</span> <span class="string">=</span> <span class="string">binomial(),</span> <span class="string">data</span> <span class="string">=</span> <span class="string">test5)</span></span><br><span class="line"></span><br><span class="line"><span class="string">Deviance</span> <span class="attr">Residuals:</span> </span><br><span class="line">    <span class="string">Min</span>       <span class="number">1</span><span class="string">Q</span>   <span class="string">Median</span>       <span class="number">3</span><span class="string">Q</span>      <span class="string">Max</span>  </span><br><span class="line"><span class="bullet">-</span><span class="number">1.4490</span>  <span class="bullet">-0.8782</span>  <span class="bullet">-0.8782</span>   <span class="number">0.9282</span>   <span class="number">1.5096</span>  </span><br><span class="line"></span><br><span class="line"><span class="attr">Coefficients:</span></span><br><span class="line">            <span class="string">Estimate</span> <span class="string">Std.</span> <span class="string">Error</span> <span class="string">z</span> <span class="string">value</span> <span class="string">Pr(&gt;|z|)</span>  </span><br><span class="line"><span class="string">(Intercept)</span>   <span class="number">0.6190</span>     <span class="number">0.4688</span>   <span class="number">1.320</span>   <span class="number">0.1867</span>  </span><br><span class="line"><span class="string">eyesight</span>     <span class="bullet">-1.3728</span>     <span class="number">0.6353</span>  <span class="bullet">-2.161</span>   <span class="number">0.0307</span> <span class="string">*</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="string">Signif.</span> <span class="attr">codes:</span>  <span class="number">0</span> <span class="string">‘***’</span> <span class="number">0.001</span> <span class="string">‘**’</span> <span class="number">0.01</span> <span class="string">‘*’</span> <span class="number">0.05</span> <span class="string">‘.’</span> <span class="number">0.1</span> <span class="string">‘</span> <span class="string">’</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="string">(Dispersion</span> <span class="string">parameter</span> <span class="string">for</span> <span class="string">binomial</span> <span class="string">family</span> <span class="string">taken</span> <span class="string">to</span> <span class="string">be</span> <span class="number">1</span><span class="string">)</span></span><br><span class="line"></span><br><span class="line">    <span class="literal">Null</span> <span class="attr">deviance:</span> <span class="number">62.183</span>  <span class="string">on</span> <span class="number">44</span>  <span class="string">degrees</span> <span class="string">of</span> <span class="string">freedom</span></span><br><span class="line"><span class="string">Residual</span> <span class="attr">deviance:</span> <span class="number">57.241</span>  <span class="string">on</span> <span class="number">43</span>  <span class="string">degrees</span> <span class="string">of</span> <span class="string">freedom</span></span><br><span class="line"><span class="attr">AIC:</span> <span class="number">61.241</span></span><br><span class="line"></span><br><span class="line"><span class="string">Number</span> <span class="string">of</span> <span class="string">Fisher</span> <span class="string">Scoring</span> <span class="attr">iterations:</span> <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以输出下截距，虽然前面的结果也已经输出截距了</span></span><br><span class="line"><span class="string">&gt; coefficients(test5_logistic_reduced)</span></span><br><span class="line"><span class="string">(Intercept)    eyesight </span></span><br><span class="line"><span class="string">  0.6190392  -1.3728110</span></span><br></pre></td></tr></table></figure>
+<p>这回是以p的形式 <span class="math display">\[
+P_{事故}=\frac{e^{0.6190-1.3728X_1}}{e^{0.6190-1.3728X_1}+1}
+\]</span></p>
+<p>我们还可以比较下，这两个方程在统计学上是不是有差异的，就是跟线性回归一样用anova函数</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">anova</span>(test5_logistic,test5_logistic_reduced,<span class="keyword">test</span> = <span class="string">"Chisq"</span>)</span><br><span class="line">Analysis of Deviance <span class="keyword">Table</span></span><br><span class="line"></span><br><span class="line">Model 1: accident ~ eyesight + age + eduction</span><br><span class="line">Model 2: accident ~ eyesight</span><br><span class="line">  Resid. Df Resid. Dev Df Deviance <span class="keyword">Pr</span>(&gt;Chi)</span><br><span class="line">1        41     57.026                     </span><br><span class="line">2        43     57.241 -2 -0.21572   0.8978</span><br></pre></td></tr></table></figure>
+<p>发现两个模型是没有差异的。</p>
+<p><strong>3.A是一名参加过驾车教育，但视力有问题的50岁老司机；B是一名没有参加过驾车教育，但视力良好的20岁新手。现在A、B都想在某保险公司投保，但按公司规定，被保险人必须满足“明年出事故的概率不高于40%”的条件才能予以承保。请预测A、B两者明年出事故的概率，并告诉保险公司谁可以投保。</strong></p>
+<p>这里就是用我们构建的模型去预测结果。但有一个问题就是拿哪个模型去预测呢。<strong>答案里面是用了精简以后的（去掉了不显著的变量）模型。</strong></p>
+<blockquote>
+<p>我们可以都看下，反正就一行代码的事情。考试的时候，我觉得用精简的模型吧。虽然我也不太清楚啥时候去掉变量。</p>
+</blockquote>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 构建测试数据框</span><br><span class="line"># 注意列名都必须和原来的数据框（或者说你用来构建模型的变量）列名是一致的</span><br><span class="line">&gt; data &lt;- data.frame(eyesight=c(<span class="number">0</span>,<span class="number">1</span>),age=c(<span class="number">50</span>,<span class="number">20</span>),eduction=c(<span class="number">1</span>,<span class="number">0</span>))</span><br><span class="line">&gt; rownames(data) &lt;- c(<span class="string">"A"</span>,<span class="string">"B"</span>)</span><br><span class="line">&gt; data</span><br><span class="line">  eyesight age eduction</span><br><span class="line">A        <span class="number">0</span>  <span class="number">50</span>        <span class="number">1</span></span><br><span class="line">B        <span class="number">1</span>  <span class="number">20</span>        <span class="number">0</span></span><br><span class="line"></span><br><span class="line"># 利用predict进行预测</span><br><span class="line"># 添加到原来数据框会更加直观一点。</span><br><span class="line"># 注意要写type=<span class="string">"response"</span></span><br><span class="line">&gt; data$prob &lt;- predict(test5_logistic,data,type=<span class="string">"response"</span>)</span><br><span class="line">&gt; data$prob1 &lt;- predict(test5_logistic_reduced,data,type=<span class="string">"response"</span>)</span><br><span class="line">&gt; data</span><br><span class="line">  eyesight age eduction      prob prob1</span><br><span class="line">A        <span class="number">0</span>  <span class="number">50</span>        <span class="number">1</span> <span class="number">0.6971400</span>  <span class="number">0.65</span></span><br><span class="line">B        <span class="number">1</span>  <span class="number">20</span>        <span class="number">0</span> <span class="number">0.2828481</span>  <span class="number">0.32</span></span><br></pre></td></tr></table></figure>
+<h3 id="题目2">题目2</h3>
+<p>这题的数据比较多，且比较麻烦。我就不放数据了，写出来只是为了讲下参考变量和训练测试集等几个概念。</p>
+<p>这题的大致目的就是用10个自变量去做出诊断，肿瘤是否是良性的（M = malignant（恶性的）, B = benign（良性的））。总的来说，数据集有357个良性肿瘤，212个恶性肿瘤，即共有569个数据点。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; head(test_mean,n = <span class="number">1</span>)</span><br><span class="line">  diagnosis radius_mean texture_mean perimeter_mean area_mean smoothness_mean compactness_mean concavity_mean concave.points_mean symmetry_mean fractal_dimension_mean</span><br><span class="line"><span class="number">1</span>         M       <span class="number">17.99</span>        <span class="number">10.38</span>          <span class="number">122.8</span>      <span class="number">1001</span>          <span class="number">0.1184</span>           <span class="number">0.2776</span>         <span class="number">0.3001</span>              <span class="number">0.1471</span>        <span class="number">0.2419</span>                <span class="number">0.07871</span></span><br></pre></td></tr></table></figure>
+<p><strong>1. Use all mean features to construct a logistic regression model</strong></p>
+<p>因为原始数据集是包括了mean，var等等。这里只要求用mean部分的数据。所以我们就先提取了mean那部分数据集，然后还是用glm。</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"># 读取，提取数据</span><br><span class="line">test &lt;- read.table("rawdata/homework-<span class="number">6</span>.<span class="number">6</span>-data.csv",header = T,sep = ",")</span><br><span class="line">test_mean &lt;- test[,<span class="number">2</span>:<span class="number">12</span>]</span><br><span class="line"></span><br><span class="line"># 构建logistic回归模型，formula那边我用一个.代替了所有的变量，这样写写更方便</span><br><span class="line">&gt; test_logistic &lt;- glm(diagnosis ~ . , data = test_mean, family = binomial())</span><br><span class="line">Warning message:</span><br><span class="line">glm.fit: fitted probabilities numerically <span class="number">0</span> or <span class="number">1</span> occurred </span><br><span class="line"></span><br><span class="line">&gt; summary(test_logistic)</span><br><span class="line"></span><br><span class="line">Call:</span><br><span class="line">glm(formula = diagnosis ~ ., family = binomial(), data = test_mean)</span><br><span class="line"></span><br><span class="line">Deviance Residuals: </span><br><span class="line">     Min        <span class="number">1</span>Q    Median        <span class="number">3</span>Q       Max  </span><br><span class="line">-<span class="number">1.95590</span>  -<span class="number">0.14839</span>  -<span class="number">0.03943</span>   <span class="number">0.00429</span>   <span class="number">2.91690</span>  </span><br><span class="line"></span><br><span class="line">Coefficients:</span><br><span class="line">                        Estimate Std. Error z value Pr(&gt;|z|)    </span><br><span class="line">(Intercept)             -<span class="number">7.35952</span>   <span class="number">12.85259</span>  -<span class="number">0</span>.<span class="number">573</span>   <span class="number">0</span>.<span class="number">5669</span>    </span><br><span class="line">radius_mean             -<span class="number">2.04930</span>    <span class="number">3.71588</span>  -<span class="number">0</span>.<span class="number">551</span>   <span class="number">0</span>.<span class="number">5813</span>    </span><br><span class="line">texture_mean             <span class="number">0.38473</span>    <span class="number">0.06454</span>   <span class="number">5</span>.<span class="number">961</span>  <span class="number">2</span>.<span class="number">5</span>e-<span class="number">09</span> ***</span><br><span class="line">perimeter_mean          -<span class="number">0.07151</span>    <span class="number">0.50516</span>  -<span class="number">0</span>.<span class="number">142</span>   <span class="number">0</span>.<span class="number">8874</span>    </span><br><span class="line">area_mean                <span class="number">0.03980</span>    <span class="number">0.01674</span>   <span class="number">2</span>.<span class="number">377</span>   <span class="number">0</span>.<span class="number">0174</span> *  </span><br><span class="line">smoothness_mean         <span class="number">76.43227</span>   <span class="number">31.95492</span>   <span class="number">2</span>.<span class="number">392</span>   <span class="number">0</span>.<span class="number">0168</span> *  </span><br><span class="line">compactness_mean        -<span class="number">1.46242</span>   <span class="number">20.34249</span>  -<span class="number">0</span>.<span class="number">072</span>   <span class="number">0</span>.<span class="number">9427</span>    </span><br><span class="line">concavity_mean           <span class="number">8.46870</span>    <span class="number">8.12003</span>   <span class="number">1</span>.<span class="number">043</span>   <span class="number">0</span>.<span class="number">2970</span>    </span><br><span class="line">concave.points_mean     <span class="number">66.82176</span>   <span class="number">28.52910</span>   <span class="number">2</span>.<span class="number">342</span>   <span class="number">0</span>.<span class="number">0192</span> *  </span><br><span class="line">symmetry_mean           <span class="number">16.27824</span>   <span class="number">10.63059</span>   <span class="number">1</span>.<span class="number">531</span>   <span class="number">0</span>.<span class="number">1257</span>    </span><br><span class="line">fractal_dimension_mean -<span class="number">68.33703</span>   <span class="number">85.55666</span>  -<span class="number">0</span>.<span class="number">799</span>   <span class="number">0</span>.<span class="number">4244</span>    </span><br><span class="line">---</span><br><span class="line">Signif. codes:  <span class="number">0</span> ‘***’ <span class="number">0</span>.<span class="number">001</span> ‘**’ <span class="number">0</span>.<span class="number">01</span> ‘*’ <span class="number">0</span>.<span class="number">05</span> ‘.’ <span class="number">0</span>.<span class="number">1</span> ‘ ’ <span class="number">1</span></span><br><span class="line"></span><br><span class="line">(Dispersion parameter for binomial family taken to be <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    Null deviance: <span class="number">751</span>.<span class="number">44</span>  on <span class="number">568</span>  degrees of freedom</span><br><span class="line">Residual deviance: <span class="number">146</span>.<span class="number">13</span>  on <span class="number">558</span>  degrees of freedom</span><br><span class="line">AIC: <span class="number">168</span>.<span class="number">13</span></span><br><span class="line"></span><br><span class="line">Number of Fisher Scoring iterations: <span class="number">9</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>大家可以在输出结果里面看到这10个变量。</p>
+</blockquote>
+<p><strong>2. Then try to reduce the number of features from your last model, construct another regression model,and you will need to write down the equation of your logistic regression model(Tips: Logit P = α+β1X1+β2X2+..+βpXp)</strong></p>
+<p>我们可以把显著性的变量挑出来，再次构建一个新的logistic回归模型</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&gt; test_logistic_reduced &lt;- glm(diagnosis ~ texture_mean + area_mean + smoothness_mean + concave.points_mean, data = test_mean, family = binomial())</span></span><br><span class="line"><span class="string">Warning message:</span></span><br><span class="line"><span class="string">glm.fit: fitted probabilities numerically 0 or 1 occurred </span></span><br><span class="line"><span class="string">&gt; summary(test_logistic_reduced)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span><span class="attr">Call:</span></span><br><span class="line"><span class="string">glm(formula</span> <span class="string">=</span> <span class="string">diagnosis</span> <span class="string">~</span> <span class="string">texture_mean</span> <span class="string">+</span> <span class="string">area_mean</span> <span class="string">+</span> <span class="string">smoothness_mean</span> <span class="string">+</span> </span><br><span class="line">    <span class="string">concave.points_mean,</span> <span class="string">family</span> <span class="string">=</span> <span class="string">binomial(),</span> <span class="string">data</span> <span class="string">=</span> <span class="string">test_mean)</span></span><br><span class="line"></span><br><span class="line"><span class="string">Deviance</span> <span class="attr">Residuals:</span> </span><br><span class="line">     <span class="string">Min</span>        <span class="number">1</span><span class="string">Q</span>    <span class="string">Median</span>        <span class="number">3</span><span class="string">Q</span>       <span class="string">Max</span>  </span><br><span class="line"><span class="bullet">-</span><span class="number">2.31798</span>  <span class="bullet">-0.15623</span>  <span class="bullet">-0.04212</span>   <span class="number">0.01662</span>   <span class="number">2.84201</span>  </span><br><span class="line"></span><br><span class="line"><span class="attr">Coefficients:</span></span><br><span class="line">                      <span class="string">Estimate</span> <span class="string">Std.</span> <span class="string">Error</span> <span class="string">z</span> <span class="string">value</span> <span class="string">Pr(&gt;|z|)</span>    </span><br><span class="line"><span class="string">(Intercept)</span>         <span class="bullet">-23.677816</span>   <span class="number">3.882774</span>  <span class="bullet">-6.098</span> <span class="number">1.07e-09</span> <span class="string">***</span></span><br><span class="line"><span class="string">texture_mean</span>          <span class="number">0.362687</span>   <span class="number">0.060544</span>   <span class="number">5.990</span> <span class="number">2.09e-09</span> <span class="string">***</span></span><br><span class="line"><span class="string">area_mean</span>             <span class="number">0.010342</span>   <span class="number">0.002002</span>   <span class="number">5.165</span> <span class="number">2.40e-07</span> <span class="string">***</span></span><br><span class="line"><span class="string">smoothness_mean</span>      <span class="number">59.471304</span>  <span class="number">25.965153</span>   <span class="number">2.290</span>    <span class="number">0.022</span> <span class="string">*</span>  </span><br><span class="line"><span class="string">concave.points_mean</span>  <span class="number">76.571210</span>  <span class="number">16.427864</span>   <span class="number">4.661</span> <span class="number">3.15e-06</span> <span class="string">***</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="string">Signif.</span> <span class="attr">codes:</span>  <span class="number">0</span> <span class="string">‘***’</span> <span class="number">0.001</span> <span class="string">‘**’</span> <span class="number">0.01</span> <span class="string">‘*’</span> <span class="number">0.05</span> <span class="string">‘.’</span> <span class="number">0.1</span> <span class="string">‘</span> <span class="string">’</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="string">(Dispersion</span> <span class="string">parameter</span> <span class="string">for</span> <span class="string">binomial</span> <span class="string">family</span> <span class="string">taken</span> <span class="string">to</span> <span class="string">be</span> <span class="number">1</span><span class="string">)</span></span><br><span class="line"></span><br><span class="line">    <span class="literal">Null</span> <span class="attr">deviance:</span> <span class="number">751.44</span>  <span class="string">on</span> <span class="number">568</span>  <span class="string">degrees</span> <span class="string">of</span> <span class="string">freedom</span></span><br><span class="line"><span class="string">Residual</span> <span class="attr">deviance:</span> <span class="number">156.44</span>  <span class="string">on</span> <span class="number">564</span>  <span class="string">degrees</span> <span class="string">of</span> <span class="string">freedom</span></span><br><span class="line"><span class="attr">AIC:</span> <span class="number">166.44</span></span><br><span class="line"></span><br><span class="line"><span class="string">Number</span> <span class="string">of</span> <span class="string">Fisher</span> <span class="string">Scoring</span> <span class="attr">iterations:</span> <span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p>回归模型为 <span class="math display">\[
+ln(\frac{P_{M}}{1-P_{M}})=-23.677816+0.362687*X_1+0.010342*X_2+59.471304*X_3+76.571210*X_4
+\]</span></p>
+<p><strong>3. Use proper test to test the difference between two models</strong></p>
+<p>用anova就可以了</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">anova</span>(test_logistic,test_logistic_reduced,<span class="keyword">test</span> = <span class="string">"Chisq"</span>)</span><br><span class="line">Analysis of Deviance <span class="keyword">Table</span></span><br><span class="line"></span><br><span class="line">Model 1: diagnosis ~ radius_mean + texture_mean + perimeter_mean + area_mean + </span><br><span class="line">    smoothness_mean + compactness_mean + concavity_mean + concave.points_mean + </span><br><span class="line">    symmetry_mean + fractal_dimension_mean</span><br><span class="line">Model 2: diagnosis ~ texture_mean + area_mean + smoothness_mean + concave.points_mean</span><br><span class="line">  Resid. Df Resid. Dev Df Deviance <span class="keyword">Pr</span>(&gt;Chi)</span><br><span class="line">1       558     146.13                     </span><br><span class="line">2       564     156.44 -6   -10.31   0.1122</span><br></pre></td></tr></table></figure>
+<p><strong>4. You may split the data properly, use part of them to train your regression model and use another part to make predictions. Lastly, you may try to calculate the accuracy of your model.(Tips: To split the data, you can use the first 398 rows as training data, use the last 171 rows as prediction data.The predict function return a value between 0 and 1, 0.~0.5 belong to the first class, and 0.5~1 belong to second class in binary classification problems)</strong></p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 构建训练集和测试集数据</span></span><br><span class="line"><span class="title">data_train</span> &lt;- test[<span class="number">1</span>:<span class="number">398</span>,]</span><br><span class="line"><span class="title">data_test</span> &lt;- test[<span class="number">399</span>:<span class="number">569</span>,]</span><br><span class="line"></span><br><span class="line"><span class="meta"># 利用训练集构建logistic回归模型</span></span><br><span class="line">&gt; test_train_logistic &lt;- glm(diagnosis ~ texture_mean + area_mean + smoothness_mean + concave.points_mean, <span class="class"><span class="keyword">data</span> = data_train, <span class="keyword">family</span> = binomial())</span></span><br><span class="line">&gt; summary(test_train_logistic)</span><br><span class="line"></span><br><span class="line"><span class="type">Call</span>:</span><br><span class="line"><span class="title">glm</span>(formula = diagnosis ~ texture_mean + area_mean + smoothness_mean + </span><br><span class="line">    concave.points_mean, <span class="keyword">family</span> = binomial(), <span class="class"><span class="keyword">data</span> = data_train)</span></span><br><span class="line"></span><br><span class="line"><span class="type">Deviance</span> <span class="type">Residuals</span>: </span><br><span class="line">     <span class="type">Min</span>        <span class="number">1</span>Q    <span class="type">Median</span>        <span class="number">3</span>Q       <span class="type">Max</span>  </span><br><span class="line"><span class="number">-2.39278</span>  <span class="number">-0.14454</span>  <span class="number">-0.02447</span>   <span class="number">0.03635</span>   <span class="number">2.60665</span>  </span><br><span class="line"></span><br><span class="line"><span class="type">Coefficients</span>:</span><br><span class="line">                     <span class="type">Estimate</span> <span class="type">Std</span>. <span class="type">Error</span> z value <span class="type">Pr</span>(&gt;|z|)    </span><br><span class="line">(<span class="type">Intercept</span>)         <span class="number">-27.47397</span>    <span class="number">4.74798</span>  <span class="number">-5.786</span> <span class="number">7.19e-09</span> ***</span><br><span class="line"><span class="title">texture_mean</span>          <span class="number">0.46244</span>    <span class="number">0.08434</span>   <span class="number">5.483</span> <span class="number">4.19e-08</span> ***</span><br><span class="line"><span class="title">area_mean</span>             <span class="number">0.01082</span>    <span class="number">0.00235</span>   <span class="number">4.606</span> <span class="number">4.11e-06</span> ***</span><br><span class="line"><span class="title">smoothness_mean</span>      <span class="number">90.11221</span>   <span class="number">30.96961</span>   <span class="number">2.910</span> <span class="number">0.003618</span> ** </span><br><span class="line"><span class="title">concave</span>.points_mean  <span class="number">59.01212</span>   <span class="number">17.51779</span>   <span class="number">3.369</span> <span class="number">0.000755</span> ***</span><br><span class="line"><span class="comment">---</span></span><br><span class="line"><span class="type">Signif</span>. codes:  <span class="number">0</span> ‘***’ <span class="number">0.001</span> ‘**’ <span class="number">0.01</span> ‘*’ <span class="number">0.05</span> ‘.’ <span class="number">0.1</span> ‘ ’ <span class="number">1</span></span><br><span class="line"></span><br><span class="line">(<span class="type">Dispersion</span> parameter for binomial <span class="keyword">family</span> taken to be <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="type">Null</span> deviance: <span class="number">544.93</span>  on <span class="number">397</span>  degrees <span class="keyword">of</span> freedom</span><br><span class="line"><span class="type">Residual</span> deviance: <span class="number">108.30</span>  on <span class="number">393</span>  degrees <span class="keyword">of</span> freedom</span><br><span class="line"><span class="type">AIC</span>: <span class="number">118.3</span></span><br><span class="line"></span><br><span class="line"><span class="type">Number</span> <span class="keyword">of</span> <span class="type">Fisher</span> <span class="type">Scoring</span> iterations: <span class="number">8</span></span><br><span class="line"></span><br><span class="line"><span class="meta"># 先把测试集里面真实的诊断结果提出来</span></span><br><span class="line"><span class="title">diagnosis_pred</span> &lt;- data_test[,<span class="string">"diagnosis"</span>,drop=<span class="type">F</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta"># 用模型去预测测试集的结果，并把预测的概率结果跟真实结果放一起</span></span><br><span class="line"><span class="title">diagnosis_pred</span>$pred &lt;- predict(test_train_logistic,data_test,<span class="class"><span class="keyword">type</span>="response")</span></span><br><span class="line"></span><br><span class="line"><span class="meta"># 把&gt;0.5的定义为M，即恶性。把&lt;0.5定义为B，即良性</span></span><br><span class="line"><span class="title">diagnosis_pred</span>$pred_result &lt;- ifelse(data_test$pred &gt; <span class="number">0.5</span>, <span class="string">"M"</span>,<span class="string">"B"</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta"># 然后就拿预测的结果跟真实的结果进行比较，并计算有多少是TRUE的。就是所谓的accuracy</span></span><br><span class="line">&gt; mean(diagnosis_pred$diagnosis == diagnosis_pred$pred_result)</span><br><span class="line">[<span class="number">1</span>] <span class="number">0.9064327</span></span><br></pre></td></tr></table></figure>
+<p>这样一套下来，大家可能会感觉有些奇怪。在题目1的时候，1代表出事故，0代表没出事故。然后<span class="math inline">\(ln(\frac{p}{1-p})\)</span> 里面的p代表的是y=1的概率，即出事故的概率。这一切都很顺理成章。但是在题目2的时候，M代表恶性的，B代表良性的。那为啥<span class="math inline">\(ln(\frac{p}{1-p})\)</span> 里面的p代表的就是M呢。或者说为啥M代表的就是1，B代表的就是0呢。</p>
+<blockquote>
+<p>以下纯属个人观点</p>
+</blockquote>
+<p>事实上，对于二元变量，glm会确定你的<strong>响应变量</strong>里面谁是<strong>reference level</strong>。或者说，会确定谁是那个<strong>0</strong>。那么，glm是怎么确定的呢。</p>
+<ul>
+<li><p>如果你的响应变量本身就是0和1了，那么自然0就是reference level了。</p>
+<blockquote>
+<p>这时候，只要响应变量是0和1，那么其就不需要是因子型的变量。数值型的0和1也是可以的</p>
+</blockquote></li>
+<li><p>如果你的响应变量是字符串型的，那么<strong>首先，你的响应变量必须是因子型的变量</strong>才可以让glm决定谁是reference level，即谁是那个0。我们有两种方法来知道谁是reference level。</p>
+<ul>
+<li><p>利用str或者直接输出响应变量（本来应该是test_mean做示例的，我懒得再改了……）</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 可以看到 levels 后面，排在最前面的就是reference level，即<span class="keyword">B是reference </span>level</span><br><span class="line">&gt; <span class="keyword">str(test)</span></span><br><span class="line"><span class="keyword">'data.frame':	</span><span class="number">569</span> obs. of  <span class="number">32</span> variables:</span><br><span class="line"> $ id                     : int  <span class="number">842302</span> <span class="number">842517</span> <span class="number">84300903</span> <span class="number">84348301</span> <span class="number">84358402</span> <span class="number">843786</span> <span class="number">844359</span> <span class="number">84458202</span> <span class="number">844981</span> <span class="number">84501001</span> ...</span><br><span class="line"> $ diagnosis              : Factor w/ <span class="number">2</span> levels <span class="string">"B"</span>,<span class="string">"M"</span>: <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> ...</span><br><span class="line"> </span><br><span class="line">&gt; test$diagnosis</span><br><span class="line">……</span><br><span class="line">[<span class="number">532</span>] <span class="keyword">B </span><span class="keyword">B </span>M <span class="keyword">B </span>M M <span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span>M M M M M M <span class="keyword">B</span></span><br><span class="line"><span class="keyword">Levels: </span><span class="keyword">B </span>M</span><br></pre></td></tr></table></figure></li>
+<li><p>利用contrast</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 清除地显示了B是<span class="number">0</span>，M是<span class="number">1</span></span><br><span class="line">&gt; contrasts(test$diagnosis)</span><br><span class="line">  M</span><br><span class="line">B <span class="number">0</span></span><br><span class="line">M <span class="number">1</span></span><br></pre></td></tr></table></figure></li>
+<li><p>如果你的响应变量既不是0和1，也不是因子型的变量，就会报错</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 把B和M变成字符串型的</span></span><br><span class="line">&gt; test_mean$diagnosis &lt;- <span class="keyword">as</span>.character(test_mean$diagnosis)</span><br><span class="line">&gt; test_logistic &lt;- glm(diagnosis ~ . , <span class="class"><span class="keyword">data</span> = test_mean, <span class="keyword">family</span> = binomial())</span></span><br><span class="line"><span class="type">Error</span> <span class="keyword">in</span> eval(<span class="keyword">family</span>$initialize) : y values must be <span class="number">0</span> &lt;= y &lt;= <span class="number">1</span></span><br></pre></td></tr></table></figure></li>
+<li><p>当然，如果你的响应变量是数值型，但还是没有变成因子型，照样还是会报错，可以自己试试。</p></li>
+</ul></li>
+</ul>
+<p>通过上面的讲述，我们就发现了B是reference level，即是0。而M是对立的那个level，即是1。而我们logistic输出的是y=1的概率，即y=恶性肿瘤的概率。然后也刚好对应的我们前面的</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 把&gt;0.5的定义为M，即恶性。把&lt;0.5定义为B，即良性</span></span><br><span class="line">diagnosis_pred$pred_result &lt;- ifelse(data_test$pred &gt; <span class="number">0.5</span>, <span class="string">"M"</span>,<span class="string">"B"</span>)</span><br></pre></td></tr></table></figure>
+<p>只有y=M的概率足够大，才定义为M。这里我们设定的<strong>足够大</strong>是0.5。你也可以认为大于0.9才算出是M，这样结果就会不太一样。</p>
+<blockquote>
+<p>关于ifelse，可以去看下《R语言实战》第二版的p435，这里不再讲述。</p>
+</blockquote>
+<p>我们也可以把我们的响应变量直接变成0和1</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="built_in">test_mean</span>$diagnosis &lt;- <span class="built_in">factor</span>(<span class="built_in">test_mean</span>$diagnosis,levels = c(<span class="string">"B"</span>,<span class="string">"M"</span>), <span class="built_in">labels</span> = c(<span class="number">0</span>,<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<p>那么，我们该如果更改我们的reference level呢，一种方法我觉得应该可以是像上面那样，响应变量直接变成0和1，非常直观，但个人觉得不太符合逻辑……。另一种就是下面那样</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">test_mean$<span class="keyword">diagnosis </span>&lt;- relevel(test_mean$<span class="keyword">diagnosis, </span>ref = <span class="string">"M"</span>)</span><br><span class="line"></span><br><span class="line">&gt; test_mean$<span class="keyword">diagnosis</span></span><br><span class="line"><span class="keyword">……</span></span><br><span class="line"><span class="keyword">[532] </span><span class="keyword">B </span><span class="keyword">B </span>M <span class="keyword">B </span>M M <span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span><span class="keyword">B </span>M M M M M M <span class="keyword">B</span></span><br><span class="line"><span class="keyword">Levels: </span>M <span class="keyword">B</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="keyword"># </span>现在M变了<span class="number">0</span>，<span class="keyword">B变成了1</span></span><br><span class="line"><span class="keyword">&gt; </span>contrasts(test_mean$<span class="keyword">diagnosis)</span></span><br><span class="line"><span class="keyword"> </span> <span class="keyword">B</span></span><br><span class="line"><span class="keyword">M </span><span class="number">0</span></span><br><span class="line"><span class="keyword">B </span><span class="number">1</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>最后强调下，glm会找谁是reference level，即谁是0。但我们最终得到的概率是对立的level的概率！</p>
+</blockquote>
+<p><strong>参考文章</strong></p>
+<p><a href="https://stats.stackexchange.com/questions/207427/confused-with-the-reference-level-in-logistic-regression-in-r" target="_blank" rel="noopener">https://stats.stackexchange.com/questions/207427/confused-with-the-reference-level-in-logistic-regression-in-r</a></p>
+<p><a href="https://stackoverflow.com/questions/17772775/change-reference-group-using-glm-with-binomial-family" target="_blank" rel="noopener">https://stackoverflow.com/questions/17772775/change-reference-group-using-glm-with-binomial-family</a></p>
+<p><a href="https://stackoverflow.com/questions/23282048/logistic-regression-defining-reference-level-in-r" target="_blank" rel="noopener">https://stackoverflow.com/questions/23282048/logistic-regression-defining-reference-level-in-r</a></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Statistics/" rel="tag"># Statistics</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/06/14/给女朋友写的生统资料-Part16/" rel="next" title="给女朋友写的生统资料_Part16">
+                  <i class="fa fa-chevron-left"></i> 给女朋友写的生统资料_Part16
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/06/18/给女朋友写的生统资料-Part18/" rel="prev" title="给女朋友写的生统资料_Part18">
+                  给女朋友写的生统资料_Part18 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#逻辑斯蒂回归"><span class="nav-number">1.</span> <span class="nav-text">逻辑斯蒂回归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#logistic模型"><span class="nav-number">1.1.</span> <span class="nav-text">logistic模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#r语言的实现"><span class="nav-number">2.</span> <span class="nav-text">R语言的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目1"><span class="nav-number">2.1.</span> <span class="nav-text">题目1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#题目2"><span class="nav-number">2.2.</span> <span class="nav-text">题目2</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Just For Daisy</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Just For Daisy</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>

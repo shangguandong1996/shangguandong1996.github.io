@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="apply和function 差异基因的检验估计会用到function和apply。不过差异基因表达的function和apply估计也不会有太大的难度，所以我这里就直接放上《R语言实战》的例子。详细地题目应对我还是放到后面具体题目（当然也是因为我R语言太菜了……）">
+<meta name="keywords" content="Statistics">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给女朋友写的生统资料_Part18">
+<meta property="og:url" content="http://yoursite.com/2019/06/18/给女朋友写的生统资料-Part18/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="apply和function 差异基因的检验估计会用到function和apply。不过差异基因表达的function和apply估计也不会有太大的难度，所以我这里就直接放上《R语言实战》的例子。详细地题目应对我还是放到后面具体题目（当然也是因为我R语言太菜了……）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/images/Biostat_for_GF_Part18_R%20function.png">
+<meta property="og:image" content="http://yoursite.com/images/Biostat_for_GF_Part18_R%20apply.png">
+<meta property="og:image" content="http://yoursite.com/images/Biostat_for_GF_Part18_R%20apply_1.png">
+<meta property="og:updated_time" content="2019-09-06T14:53:23.526Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="给女朋友写的生统资料_Part18">
+<meta name="twitter:description" content="apply和function 差异基因的检验估计会用到function和apply。不过差异基因表达的function和apply估计也不会有太大的难度，所以我这里就直接放上《R语言实战》的例子。详细地题目应对我还是放到后面具体题目（当然也是因为我R语言太菜了……）">
+<meta name="twitter:image" content="http://yoursite.com/images/Biostat_for_GF_Part18_R%20function.png">
+  <link rel="canonical" href="http://yoursite.com/2019/06/18/给女朋友写的生统资料-Part18/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>给女朋友写的生统资料_Part18 | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/18/给女朋友写的生统资料-Part18/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Just For Daisy">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">给女朋友写的生统资料_Part18
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-18 21:23:41" itemprop="dateCreated datePublished" datetime="2019-06-18T21:23:41+08:00">2019-06-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-06 22:53:23" itemprop="dateModified" datetime="2019-09-06T22:53:23+08:00">2019-09-06</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生物医学统计课/" itemprop="url" rel="index"><span itemprop="name">生物医学统计课</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="apply和function">apply和function</h2>
+<p>差异基因的检验估计会用到function和apply。不过差异基因表达的function和apply估计也不会有太大的难度，所以我这里就直接放上《R语言实战》的例子。详细地题目应对我还是放到后面具体题目（当然也是因为我R语言太菜了……）</p>
+<a id="more"></a>
+<h3 id="function">function</h3>
+<blockquote>
+<p>function可以去看下《R语言实战》第二版的P436，我这里截个图</p>
+</blockquote>
+<p><img src="/images/Biostat_for_GF_Part18_R%20function.png"></p>
+<p>function的基本语法为</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">functionname &lt;- <span class="function"><span class="keyword">function</span><span class="params">(parameters)</span></span>&#123;</span><br><span class="line">  statements</span><br><span class="line">  <span class="keyword">return</span>(<span class="keyword">value</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>functionname就是你的函数名字，你也可以写成wodehanshu这种名字。</p>
+<p>parameters里面就是设定你要用到的参数</p>
+<p>statement就是你执行的一系列操作，一般来说你这一系列操作会产生一个值。然后用return返回</p>
+<p>例子的话，上面已经举了。</p>
+<h3 id="apply">apply</h3>
+<p>apply的使用我还是放一个《R语言实战》的例子，在P95和P96</p>
+<p><img src="/images/Biostat_for_GF_Part18_R%20apply.png"></p>
+<p><img src="/images/Biostat_for_GF_Part18_R%20apply_1.png"></p>
+<h2 id="差异基因表达">差异基因表达</h2>
+<p>差异基因估计是用t-test做检验，然后用p.adjust做矫正（虽然照理说不能用t-test做）。我这里就不详细地讲了。举几个例子吧</p>
+<h3 id="题目1">题目1</h3>
+<p>我们第4次作业的第四题</p>
+<p>Type 1 diabetes is a multigenic disease caused by T-cell mediated destruction of the insulin producing β-cells. Although conventional (targeted) approaches of identifying causative genes have advanced our knowledge of this disease, many questions remain unanswered.</p>
+<p>Here we have a gene data from <strong>NOD mouse after(case)</strong> and <strong>before(control) treatment</strong>. The data can be found in “Data.txt”.Use the information mentioned above to answer the following questions:</p>
+<p><strong>1.use paired t-test to find genes which have significant expression (p&lt;0.05) between case and control sample. Give the number of differential expressed genes and give the names of top 10 significantly differential expression genes. hint: “apply(data,1,function(x){…})” can apply function to every row in data more quickly than “for{}”, “names()” or “rownames()” can be used to extract names of differentially expressed genes</strong></p>
+<p>这里是输入了基因表达的数据。分别是10个control和10个case，然后做配对的t-test。我们可以手动地对每个基因（即每一列）对t-test。但这样太麻烦，所以我们就可以用apply。apply可以对每一列做批量化的操作。</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"># 读取和整理数据</span><br><span class="line"># paste0这个操作就是把“gene”这个字符串和对应的列名粘起来，这样使得列名比较直观一点</span><br><span class="line">test4 &lt;- read.table("rawdata/test4.txt",header = T)</span><br><span class="line">rownames(test4) &lt;- paste0("gene",rownames(test4))</span><br><span class="line"></span><br><span class="line"># 看下数据（我后来发现没有gene1了。。。。。但我最后的答案跟作业答案一样，应该是原始文件的锅）</span><br><span class="line">&gt; head(test4)</span><br><span class="line">      control1 control2 control3 control4 control5 control6  control7 control8 control9 control10    case1    case2</span><br><span class="line">gene2 <span class="number">6.917468</span> <span class="number">6.308350</span> <span class="number">5.318841</span> <span class="number">5.886811</span> <span class="number">5.082975</span> <span class="number">5.629453</span>  <span class="number">4.919035</span> <span class="number">3.134226 4</span>.<span class="number">242564</span>  <span class="number">5.783208 3</span>.<span class="number">574525 5</span>.<span class="number">371273</span></span><br><span class="line">gene3 <span class="number">7.862730</span> <span class="number">7.065809</span> <span class="number">6.783732</span> <span class="number">6.275773</span> <span class="number">3.063104 5</span>.<span class="number">131017</span>  <span class="number">3.708938</span> <span class="number">2.766133 6</span>.<span class="number">755942</span>  <span class="number">3.954392</span> <span class="number">7.163509 5</span>.<span class="number">600665</span></span><br><span class="line">gene4 <span class="number">7.425996</span> <span class="number">7.707939</span> <span class="number">7.550885</span> <span class="number">5.708736</span> <span class="number">5.900326</span> <span class="number">6.888329</span>  <span class="number">5.987753</span> <span class="number">5.948979</span> <span class="number">7.281995</span>  <span class="number">6.758037</span> <span class="number">5.367602</span> <span class="number">7.898202</span></span><br><span class="line">gene5 <span class="number">6.544029</span> <span class="number">8.364054</span> <span class="number">7.239746 9</span>.<span class="number">037322 8</span>.<span class="number">783692 8</span>.<span class="number">863040 10</span>.<span class="number">602350 9</span>.<span class="number">046190 9</span>.<span class="number">007177</span>  <span class="number">7.866627</span> <span class="number">8.079780</span> <span class="number">8.128662</span></span><br><span class="line">gene6 <span class="number">4.986893</span> <span class="number">7.248867 7</span>.<span class="number">098780 6</span>.<span class="number">787237 6</span>.<span class="number">252609 6</span>.<span class="number">428099</span>  <span class="number">7.758556</span> <span class="number">6.726613</span> <span class="number">7.123883</span>  <span class="number">6.584567</span> <span class="number">6.642005</span> <span class="number">7.376994</span></span><br><span class="line">gene7 <span class="number">6.995863</span> <span class="number">6.448682</span> <span class="number">6.136518 7</span>.<span class="number">098878 4</span>.<span class="number">984325 5</span>.<span class="number">896835</span>  <span class="number">6.488555</span> <span class="number">5.299349</span> <span class="number">5.524948</span>  <span class="number">6.763232 7</span>.<span class="number">004367 6</span>.<span class="number">478264</span></span><br><span class="line">         case3    case4    case5    case6    case7    case8    case9   case10</span><br><span class="line">gene<span class="number">2 7.217279</span> <span class="number">6.786191 5</span>.<span class="number">523913 5</span>.<span class="number">355584 6</span>.<span class="number">693710 4</span>.<span class="number">364467 6</span>.<span class="number">270432 6</span>.<span class="number">993901</span></span><br><span class="line">gene<span class="number">3 6.079167</span> <span class="number">7.125393 5</span>.<span class="number">169236 4</span>.<span class="number">524597 4</span>.<span class="number">715383 2</span>.<span class="number">946439 4</span>.<span class="number">200206 5</span>.<span class="number">798403</span></span><br><span class="line">gene<span class="number">4 6.321147</span> <span class="number">7.810430</span> <span class="number">6.231793 6</span>.<span class="number">367243 7</span>.<span class="number">579535 7</span>.<span class="number">207376 7</span>.<span class="number">548390 6</span>.<span class="number">522594</span></span><br><span class="line">gene5 <span class="number">8.716447</span> <span class="number">9.940214 9</span>.<span class="number">224614 9</span>.<span class="number">139514 9</span>.<span class="number">429897 9</span>.<span class="number">373779 9</span>.<span class="number">287744 9</span>.<span class="number">275545</span></span><br><span class="line">gene6 <span class="number">7.080039</span> <span class="number">7.100746 6</span>.<span class="number">453575 6</span>.<span class="number">618557 7</span>.<span class="number">614747 7</span>.<span class="number">141351 6</span>.<span class="number">076726 7</span>.<span class="number">369737</span></span><br><span class="line">gene7 <span class="number">6.273696</span> <span class="number">6.413472</span> <span class="number">4.983931</span> <span class="number">5.629765</span> <span class="number">5.213316 5</span>.<span class="number">931045 5</span>.<span class="number">776625 6</span>.<span class="number">522169</span></span><br><span class="line"></span><br><span class="line"># 构建函数（我个人可能比较推荐先构建函数，然后把函数放到apply中，这样可能比较直观一点）</span><br><span class="line"># 我输入数据为x，然后我提取<span class="number">1</span>:<span class="number">10</span>个数为data1,<span class="number">11</span>:<span class="number">20</span>个数为data2。然后做t.test</span><br><span class="line">myFun &lt;- function(x)&#123;</span><br><span class="line">  data1 &lt;- x[<span class="number">1</span>:<span class="number">10</span>]</span><br><span class="line">  data2 &lt;- x[<span class="number">11</span>:<span class="number">20</span>]</span><br><span class="line">  t_result &lt;- t.test(data1,data2,paired = T)</span><br><span class="line">  p_value &lt;- t_result$p.value</span><br><span class="line">  return(p_value)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 利用apply，一行行地把数据放入myFun里面，一行行地做t.test</span><br><span class="line"># 输出应该是个向量</span><br><span class="line">test4_result &lt;- apply(test4_paired_result, <span class="number">1</span>, result)</span><br><span class="line"></span><br><span class="line"># 也可以直接一行代码</span><br><span class="line">apply(test4, <span class="number">1</span>, function(x) &#123;t.test(x[<span class="number">1</span>:<span class="number">10</span>],x[<span class="number">11</span>:<span class="number">20</span>],paired = T)$p.value&#125;)</span><br><span class="line"></span><br><span class="line"># 数下差异基因的数量</span><br><span class="line">&gt; sum(test4_result &lt; <span class="number">0</span>.<span class="number">05</span>)</span><br><span class="line">[<span class="number">1</span>] <span class="number">2296</span></span><br><span class="line"></span><br><span class="line"># 输出前<span class="number">10</span>个</span><br><span class="line">## 先对得到的p-value进行排序</span><br><span class="line">test4_result[order(test4_result)]</span><br><span class="line"></span><br><span class="line">## 然后得到前<span class="number">10</span></span><br><span class="line">&gt; test4_result[order(test4_result)][<span class="number">1</span>:<span class="number">10</span>]</span><br><span class="line">   gene28801    gene27868    gene27438    gene21642    gene24019    gene12323    gene12962    gene28939     gene2387 </span><br><span class="line"><span class="number">4</span>.<span class="number">277344</span>e-<span class="number">06</span> <span class="number">6</span>.<span class="number">093302</span>e-<span class="number">05</span> <span class="number">8</span>.<span class="number">229606</span>e-<span class="number">05</span> <span class="number">9</span>.<span class="number">889894</span>e-<span class="number">05</span> <span class="number">1</span>.<span class="number">124717</span>e-<span class="number">04</span> <span class="number">1</span>.<span class="number">261658</span>e-<span class="number">04</span> <span class="number">1</span>.<span class="number">298200</span>e-<span class="number">04</span> <span class="number">1</span>.<span class="number">462493</span>e-<span class="number">04</span> <span class="number">1</span>.<span class="number">522920</span>e-<span class="number">04</span> </span><br><span class="line">   gene18712 </span><br><span class="line"><span class="number">1</span>.<span class="number">601297</span>e-<span class="number">04</span></span><br></pre></td></tr></table></figure>
+<p><strong>2.Adjust the p-values in question a) with bonferroni and FDR method to find differentially expressed genes in stringent way( list the differentially expressed gene names and the adjusted p-value)</strong></p>
+<p>矫正的话，直接用p.adjust就可以了。这里再用sum或者mean数一数差异基因的个数</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">test4_adjust_bonf &lt;- p.adjust(test4_result, <span class="function"><span class="keyword">method</span> = "<span class="title">bonferroni</span>")</span></span><br><span class="line"><span class="function"><span class="title">mean</span><span class="params">(test4_adjust_bonf &lt; 0.05)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">test4_adjust_fdr</span> &lt;- <span class="title">p</span>.<span class="title">adjust</span><span class="params">(test4_result, <span class="keyword">method</span> = "fdr")</span></span></span><br><span class="line"><span class="function"><span class="title">mean</span><span class="params">(test4_adjust_fdr &lt; 0.05)</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="题目2">题目2</h3>
+<p>把题目中的paired数据变成非配对的数据。那么我们就要多一步方差齐性检验了。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在函数里面做判断</span></span><br><span class="line">myFun &lt;- <span class="keyword">function</span>(x)&#123;</span><br><span class="line">  <span class="keyword">data</span>1 &lt;- x[<span class="number">1</span>:<span class="number">10</span>]</span><br><span class="line">  <span class="keyword">data</span>2 &lt;- x[<span class="number">11</span>:<span class="number">20</span>]</span><br><span class="line">  <span class="keyword">if</span> (var.test(<span class="keyword">data</span>1,<span class="keyword">data</span>2)<span class="variable">$p</span>.value &gt; <span class="number">0.05</span>)&#123;</span><br><span class="line">    t_result &lt;- t.test(<span class="keyword">data</span>1,<span class="keyword">data</span>2,var.equal = T)</span><br><span class="line">    p_value &lt;- t_result<span class="variable">$p</span>.value</span><br><span class="line">    <span class="keyword">return</span>(p_value)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    t_result &lt;- t.test(<span class="keyword">data</span>1,<span class="keyword">data</span>2,var.equal = F)</span><br><span class="line">    p_value &lt;- t_result<span class="variable">$p</span>.value</span><br><span class="line">    <span class="keyword">return</span>(p_value)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test4_result &lt;- apply(test4, <span class="number">1</span>, myFun)</span><br></pre></td></tr></table></figure>
+<h3 id="题目3">题目3</h3>
+<p>来自17年考试的第5题</p>
+<p>Nonalcoholic steatohepatitis or NASH is a common liver disease, and was found to be linked to obesity and diabetes, suggesting an important role of adipose tissue in the pathogenesis of NASH. Therefore, the mouse model was used to investigate the interaction between adipose tissue and liver. Wildtype male C57Bl/6 mice were fed low fat food (LFD) or high fat food (HFD) for 21 weeks. The detailed data can be found in GDS4013.txt. Hint:provide the R code and result calculated with R. （本题共20分）</p>
+<p><strong>1.Read the data. Check whether there are NAs in the data? If NAs exist, you should deaf with them before next steps. </strong>Hint: delete the rows with NAs in data.** (5分）**</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"># 先读取数据</span><br><span class="line">&gt; test &lt;- read.table(<span class="string">"rawdata/GDS4013.txt"</span>,header = T)</span><br><span class="line">&gt; head(test)</span><br><span class="line">              LFD    LFD<span class="number">.1</span>    LFD<span class="number">.2</span>    LFD<span class="number">.3</span>    LFD<span class="number">.4</span>    LFD<span class="number">.5</span>    LFD<span class="number">.6</span>    LFD<span class="number">.7</span>    LFD<span class="number">.8</span>    LFD<span class="number">.9</span>      HFD    HFD<span class="number">.1</span>    HFD<span class="number">.2</span></span><br><span class="line">COPG1    <span class="number">7.756187</span> <span class="number">7.513726</span> <span class="number">7.927167</span> <span class="number">7.742323</span> <span class="number">7.974731</span> <span class="number">7.632936</span> <span class="number">7.419638</span> <span class="number">8.022296</span> <span class="number">7.649602</span> <span class="number">7.694316</span> <span class="number">7.717317</span> <span class="number">7.721638</span> <span class="number">7.873688</span></span><br><span class="line">ATP6V0D1 <span class="number">8.968808</span> <span class="number">9.004967</span> <span class="number">9.025234</span> <span class="number">9.139161</span> <span class="number">9.142125</span> <span class="number">8.998360</span> <span class="number">9.097204</span> <span class="number">9.181852</span> <span class="number">9.127648</span> <span class="number">9.149562</span> <span class="number">9.029930</span> <span class="number">8.948781</span> <span class="number">9.095943</span></span><br><span class="line">GOLGA7   <span class="number">9.698317</span> <span class="number">9.798994</span> <span class="number">9.765514</span> <span class="number">9.581075</span> <span class="number">9.776361</span> <span class="number">9.829636</span> <span class="number">9.670068</span> <span class="number">9.675262</span> <span class="number">9.812124</span> <span class="number">9.637824</span> <span class="number">9.625283</span> <span class="number">9.822128</span> <span class="number">9.700576</span></span><br><span class="line">PSPH     <span class="number">6.897664</span>       NA <span class="number">6.744140</span> <span class="number">7.225862</span> <span class="number">7.343744</span> <span class="number">6.877918</span> <span class="number">6.422594</span> <span class="number">7.188237</span> <span class="number">6.819006</span> <span class="number">6.524627</span> <span class="number">6.514469</span> <span class="number">6.949181</span> <span class="number">7.044664</span></span><br><span class="line">TRAPPC4  <span class="number">5.406903</span> <span class="number">5.473714</span> <span class="number">5.749002</span> <span class="number">5.416623</span> <span class="number">5.351018</span> <span class="number">5.431658</span> <span class="number">5.606044</span> <span class="number">5.401849</span> <span class="number">5.374199</span> <span class="number">5.331412</span> <span class="number">5.439976</span> <span class="number">5.487543</span> <span class="number">5.290085</span></span><br><span class="line">DPM2     <span class="number">6.532734</span> <span class="number">6.215751</span> <span class="number">6.520986</span> <span class="number">6.143827</span> <span class="number">6.597586</span> <span class="number">6.731978</span> <span class="number">6.553594</span> <span class="number">6.659309</span> <span class="number">6.288114</span> <span class="number">6.561733</span> <span class="number">6.819006</span> <span class="number">6.616581</span> <span class="number">6.349064</span></span><br><span class="line">            HFD<span class="number">.3</span>    HFD<span class="number">.4</span>    HFD<span class="number">.5</span>    HFD<span class="number">.6</span>    HFD<span class="number">.7</span></span><br><span class="line">COPG1    <span class="number">7.637193</span> <span class="number">7.570261</span> <span class="number">7.549871</span> <span class="number">7.687248</span> <span class="number">7.603990</span></span><br><span class="line">ATP6V0D1 <span class="number">9.092459</span> <span class="number">8.981442</span> <span class="number">9.014060</span> <span class="number">9.122049</span> <span class="number">9.000419</span></span><br><span class="line">GOLGA7   <span class="number">9.739647</span> <span class="number">9.679455</span> <span class="number">9.790654</span> <span class="number">9.817816</span> <span class="number">9.761968</span></span><br><span class="line">PSPH     <span class="number">6.708345</span> <span class="number">6.413345</span> <span class="number">6.617198</span> <span class="number">6.843793</span> <span class="number">6.467956</span></span><br><span class="line">TRAPPC4  <span class="number">5.485993</span> <span class="number">5.376865</span> <span class="number">5.522681</span> <span class="number">5.430362</span> <span class="number">5.490806</span></span><br><span class="line">DPM2     <span class="number">6.554808</span> <span class="number">6.416926</span> <span class="number">6.562119</span> <span class="number">6.524627</span> <span class="number">6.771978</span></span><br><span class="line"></span><br><span class="line"># 利用table看看缺失值的多少</span><br><span class="line">&gt; table(is.na(test))</span><br><span class="line"></span><br><span class="line"> <span class="literal">FALSE</span>   <span class="literal">TRUE</span> </span><br><span class="line"><span class="number">481694</span>      <span class="number">4</span> </span><br><span class="line"></span><br><span class="line"># 利用na.omit</span><br><span class="line">test_new &lt;- na.omit(test)</span><br><span class="line">&gt; table(is.na(test_new))</span><br><span class="line"></span><br><span class="line"> <span class="literal">FALSE</span> </span><br><span class="line"><span class="number">481626</span></span><br></pre></td></tr></table></figure>
+<p><strong>2.Find differentially expressed genes (DEGs) (up-regulated, HF&gt;LF) between LFD and HFD samples, list the DEGs with adjusted p-values less than 0.05. For expressions of each gene, check the homogeneity of the variances in two groups at first. Hint: FDR should be used to adjust p-values.</strong></p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"># 因为不是配对检验，所以我们首先要做的是检验方差齐性</span><br><span class="line">## 所以我们需要先构建一个函数来检验方差的齐性</span><br><span class="line">myFun_var &lt;- function(data)&#123;</span><br><span class="line">  LFD &lt;- data[<span class="number">1</span>:<span class="number">10</span>]</span><br><span class="line">  HFD &lt;- data[<span class="number">11</span>:<span class="number">18</span>]</span><br><span class="line">  var_result &lt;- var.test(LFD,HFD)</span><br><span class="line">  p_value &lt;- var_result$p.value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">## 应用apply来得到p-value</span><br><span class="line">var_pvalue &lt;- apply(test_new, <span class="number">1</span>, myFun_var)</span><br><span class="line"></span><br><span class="line">## 然后往表达矩阵上多加一列p-value，得到有附加信息的表达矩阵</span><br><span class="line">&gt; test_new_var &lt;- cbind(test_new,var_pvalue)</span><br><span class="line">&gt; head(test_new_var)</span><br><span class="line">               LFD    LFD.<span class="number">1</span>    LFD.<span class="number">2</span>     LFD.<span class="number">3</span>     LFD.<span class="number">4</span>     LFD.<span class="number">5</span>     LFD.<span class="number">6</span>     LFD.<span class="number">7</span>     LFD.<span class="number">8</span>     LFD.<span class="number">9</span>       HFD     HFD.<span class="number">1</span></span><br><span class="line">COPG1     <span class="number">7.756187 7</span>.<span class="number">513726 7</span>.<span class="number">927167</span>  <span class="number">7.742323</span>  <span class="number">7.974731</span>  <span class="number">7.632936</span>  <span class="number">7.419638</span>  <span class="number">8.022296</span>  <span class="number">7.649602</span>  <span class="number">7.694316</span>  <span class="number">7.717317</span>  <span class="number">7.721638</span></span><br><span class="line">ATP6V0D1  <span class="number">8.968808</span> <span class="number">9.004967</span> <span class="number">9.025234</span>  <span class="number">9.139161</span>  <span class="number">9.142125</span>  <span class="number">8.998360</span>  <span class="number">9.097204</span>  <span class="number">9.181852</span>  <span class="number">9.127648</span>  <span class="number">9.149562</span>  <span class="number">9.029930</span>  <span class="number">8.948781</span></span><br><span class="line">GOLGA7    <span class="number">9.698317</span> <span class="number">9.798994</span> <span class="number">9.765514</span>  <span class="number">9.581075</span>  <span class="number">9.776361</span>  <span class="number">9.829636</span>  <span class="number">9.670068</span>  <span class="number">9.675262</span>  <span class="number">9.812124</span>  <span class="number">9.637824</span>  <span class="number">9.625283</span>  <span class="number">9.822128</span></span><br><span class="line">TRAPPC4   <span class="number">5.406903</span> <span class="number">5.473714</span> <span class="number">5.749002</span>  <span class="number">5.416623</span>  <span class="number">5.351018</span>  <span class="number">5.431658</span>  <span class="number">5.606044</span>  <span class="number">5.401849</span>  <span class="number">5.374199</span>  <span class="number">5.331412</span>  <span class="number">5.439976</span>  <span class="number">5.487543</span></span><br><span class="line">DPM2      <span class="number">6.532734</span> <span class="number">6.215751 6</span>.<span class="number">520986</span>  <span class="number">6.143827</span>  <span class="number">6.597586</span>  <span class="number">6.731978</span>  <span class="number">6.553594</span>  <span class="number">6.659309</span>  <span class="number">6.288114</span>  <span class="number">6.561733</span>  <span class="number">6.819006</span>  <span class="number">6.616581</span></span><br><span class="line">PSMB5    <span class="number">10.217143 9</span>.<span class="number">992716 9</span>.<span class="number">974211 10</span>.<span class="number">201814 10</span>.<span class="number">244172 10</span>.<span class="number">023191 10</span>.<span class="number">072604 10</span>.<span class="number">147738 10</span>.<span class="number">267069 10</span>.<span class="number">024750 10</span>.<span class="number">142353 10</span>.<span class="number">119065</span></span><br><span class="line">             HFD.<span class="number">2</span>     HFD.<span class="number">3</span>     HFD.<span class="number">4</span>     HFD.<span class="number">5</span>     HFD.<span class="number">6</span>     HFD.<span class="number">7</span> var_pvalue</span><br><span class="line">COPG1     <span class="number">7.873688</span>  <span class="number">7.637193</span>  <span class="number">7.570261</span>  <span class="number">7.549871</span>  <span class="number">7.687248</span>  <span class="number">7.603990</span>  <span class="number">0.1119611</span></span><br><span class="line">ATP6V0D1  <span class="number">9.095943</span>  <span class="number">9.092459</span>  <span class="number">8.981442</span>  <span class="number">9.014060</span>  <span class="number">9.122049</span>  <span class="number">9.000419</span>  <span class="number">0.5807521</span></span><br><span class="line">GOLGA7    <span class="number">9.700576</span>  <span class="number">9.739647</span>  <span class="number">9.679455</span>  <span class="number">9.790654</span>  <span class="number">9.817816</span>  <span class="number">9.761968</span>  <span class="number">0.6524620</span></span><br><span class="line">TRAPPC4   <span class="number">5.290085</span>  <span class="number">5.485993</span>  <span class="number">5.376865</span>  <span class="number">5.522681</span>  <span class="number">5.430362</span>  <span class="number">5.490806</span>  <span class="number">0.1770907</span></span><br><span class="line">DPM2      <span class="number">6.349064</span>  <span class="number">6.554808</span>  <span class="number">6.416926</span>  <span class="number">6.562119</span>  <span class="number">6.524627</span>  <span class="number">6.771978</span>  <span class="number">0.6063077</span></span><br><span class="line">PSMB5    <span class="number">10.086752</span> <span class="number">10.240642 10</span>.<span class="number">086752 10</span>.<span class="number">246507 10</span>.<span class="number">291952 10</span>.<span class="number">129569</span>  <span class="number">0.3887486</span></span><br><span class="line"></span><br><span class="line"># 得到了方差检验的p-value，我们就可以来把这个条件加入到t.test里面，然后做t-test了</span><br><span class="line">## 首先也要构建t-test的函数</span><br><span class="line"></span><br><span class="line">myFun_t_test &lt;- function(data)&#123;</span><br><span class="line">  LFD &lt;- data[<span class="number">1</span>:<span class="number">10</span>]	# <span class="number">1</span>:<span class="number">10</span>列为LFD</span><br><span class="line">  HFD &lt;- data[<span class="number">11</span>:<span class="number">18</span>]	# <span class="number">11</span>:<span class="number">18</span>列为HFD</span><br><span class="line">  var_result &lt;- data[<span class="number">19</span>]	# <span class="number">19</span>列为方差齐性的p-value</span><br><span class="line">  t_result &lt;- t.test(LFD,HFD,alternative = "less",var.equal = var_result &gt; <span class="number">0</span>.<span class="number">05</span>) ## 这里var_result是p-value，p-value如果大于<span class="number">0</span>.<span class="number">05</span>了（方差齐性），就会输出TRUE。</span><br><span class="line">  p_value &lt;- t_result$p.value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">## 利用apply，一行行地输入函数里面，做t-test</span><br><span class="line">t_test_pvalue &lt;- apply(test_new_var, <span class="number">1</span>, myFun_t_test)</span><br><span class="line"></span><br><span class="line"># 得到了p-value之后，就用fdr方法做矫正</span><br><span class="line">&gt; t_test_padjust &lt;- p.adjust(t_test_pvalue,method = "fdr")</span><br><span class="line">&gt; t_test_padjust[t_test_padjust &lt; <span class="number">0</span>.<span class="number">05</span>]</span><br><span class="line">    SEMA5B   BC048403 </span><br><span class="line"><span class="number">0.01698630</span> <span class="number">0.04004457</span></span><br></pre></td></tr></table></figure>
+<p>大家可能会奇怪这里为什么是less了，一般我们不都是two.side么</p>
+<p>选择单双边实际上是跟你的假设有关系的，我们这里是假设<strong>up-regulated, HF&gt;LF</strong>。只是单边而已。那为啥又是less，而不是greater呢。因为t.test(a,b,alternative)里面的alternative是针对前一个比后一个，即如果是greater的话，就是a比b大。我们这里是LFD放在了前面，假设是HF&gt;LF的话，那么我们写的时候应该是LFD less than HFD。</p>
+<p>举个例子的话</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"># 模拟两个值</span><br><span class="line">&gt; a &lt;- rnorm(20)</span><br><span class="line">&gt; b &lt;- rnorm(20,<span class="keyword">mean</span> = 1)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 可以看到下面的统计检验，如果是greater的话，即a&gt;b，是不显著的。而less是显著的</span><br><span class="line">&gt; t.<span class="keyword">test</span>(a,b,alternative = <span class="string">"greater"</span>)</span><br><span class="line"></span><br><span class="line">	Welch <span class="keyword">Two</span> <span class="keyword">Sample</span> t-<span class="keyword">test</span></span><br><span class="line"></span><br><span class="line">data:  a and b</span><br><span class="line">t = -1.5134, df = 30.883, p-value = 0.9298</span><br><span class="line">alternative hypothesis: true difference <span class="keyword">in</span> <span class="keyword">means</span> is greater than 0</span><br><span class="line">95 percent confidence interval:</span><br><span class="line"> -0.7961539        <span class="keyword">Inf</span></span><br><span class="line"><span class="keyword">sample</span> <span class="keyword">estimates</span>:</span><br><span class="line"><span class="keyword">mean</span> of x <span class="keyword">mean</span> of y </span><br><span class="line">0.4103696 0.7858315 </span><br><span class="line"></span><br><span class="line">&gt; t.<span class="keyword">test</span>(a,b,alternative = <span class="string">"less"</span>)</span><br><span class="line"></span><br><span class="line">	Welch <span class="keyword">Two</span> <span class="keyword">Sample</span> t-<span class="keyword">test</span></span><br><span class="line"></span><br><span class="line">data:  a and b</span><br><span class="line">t = -1.5134, df = 30.883, p-value = 0.07017</span><br><span class="line">alternative hypothesis: true difference <span class="keyword">in</span> <span class="keyword">means</span> is less than 0</span><br><span class="line">95 percent confidence interval:</span><br><span class="line">       -<span class="keyword">Inf</span> 0.04523018</span><br><span class="line"><span class="keyword">sample</span> <span class="keyword">estimates</span>:</span><br><span class="line"><span class="keyword">mean</span> of x <span class="keyword">mean</span> of y </span><br><span class="line">0.4103696 0.7858315</span><br></pre></td></tr></table></figure>
+<p>然后先方差齐性检验，后做t-tes的代码，除了上面的，也可以用题目2的代码</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用了if else</span></span><br><span class="line">myFun &lt;- <span class="keyword">function</span>(x)&#123;</span><br><span class="line">  <span class="keyword">data</span>1 &lt;- x[<span class="number">1</span>:<span class="number">10</span>]</span><br><span class="line">  <span class="keyword">data</span>2 &lt;- x[<span class="number">11</span>:<span class="number">18</span>]</span><br><span class="line">  <span class="keyword">if</span> (var.test(<span class="keyword">data</span>1,<span class="keyword">data</span>2)<span class="variable">$p</span>.value &gt; <span class="number">0.05</span>)&#123;</span><br><span class="line">    t_result &lt;- t.test(<span class="keyword">data</span>1,<span class="keyword">data</span>2,var.equal = T,alternative = <span class="string">"less"</span>)</span><br><span class="line">    p_value &lt;- t_result<span class="variable">$p</span>.value</span><br><span class="line">    <span class="keyword">return</span>(p_value)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    t_result &lt;- t.test(<span class="keyword">data</span>1,<span class="keyword">data</span>2,var.equal = F,alternative = <span class="string">"less"</span>)</span><br><span class="line">    p_value &lt;- t_result<span class="variable">$p</span>.value</span><br><span class="line">    <span class="keyword">return</span>(p_value)</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t_test_pvalue &lt;- apply(test_new_var, <span class="number">1</span>, myFun)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">t_test_padjust &lt;- p.adjust(t_test_pvalue,method = <span class="string">"fdr"</span>)</span><br><span class="line">t_test_padjust[t_test_padjust &lt; <span class="number">0.05</span>]</span><br></pre></td></tr></table></figure>
+<p>也可以用答案里面简略的</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 方差齐性检验</span></span><br><span class="line">p.vartest &lt;- apply(GDS4013_new<span class="type"></span>, <span class="number">1</span>, <span class="function"><span class="keyword">function</span></span>(x)<span class="keyword">var</span>.test(x[<span class="number">1</span>:<span class="type">10</span>],x[<span class="number">11</span>:<span class="type">18</span>])$p.value)</span><br><span class="line"></span><br><span class="line"><span class="meta"># 利用cbind合并p-value和表达矩阵</span></span><br><span class="line">GDS4013_new<span class="type">_data</span> &lt;- cbind(GDS4013_new<span class="type"></span>, p.vartest)</span><br><span class="line"></span><br><span class="line"><span class="meta"># t.test检验</span></span><br><span class="line">p.value &lt;- apply(GDS4013_new<span class="type">_data</span>, <span class="number">1</span>, <span class="function"><span class="keyword">function</span></span>(x)t.test(x[<span class="number">1</span>:<span class="type">10</span>],x[<span class="number">11</span>:<span class="type">18</span>],alternative = <span class="string">'less'</span>, <span class="keyword">var</span>.equal = (x[<span class="number">19</span>] &gt;= <span class="number">0.05</span>))$p.value)</span><br><span class="line"></span><br><span class="line">p.fdr &lt;- p.adjust(p.value, <span class="string">"fdr"</span>)</span><br><span class="line"></span><br><span class="line">&gt; sum(p.fdr&lt;<span class="number">0.05</span>)</span><br><span class="line">[<span class="number">1</span>] <span class="number">2</span></span><br><span class="line">&gt; sig.p.fdr&lt;-p.fdr[p.fdr&lt;<span class="number">0.05</span>]</span><br><span class="line">&gt; names(sort(sig.p.fdr))</span><br><span class="line">[<span class="number">1</span>] <span class="string">"SEMA5B"</span>   <span class="string">"BC048403"</span></span><br></pre></td></tr></table></figure>
+<h2 id="富集分析">富集分析</h2>
+<p>富集分析的原理我应该会在考完试有空的时候再重新理一下，我这里就直接放上用fihser exact test（fisher 精确检验）做富集分析的代码。</p>
+<blockquote>
+<p>稍微提下富集的原理。</p>
+</blockquote>
+<p>一般差异表达的基因会有上千个，一个个手动看肯定不现实。所以我们就需要从宏观上来看这些基因，用到的一个方法就是富集分析。一般用的比较多的是GO富集分析，就是比如我们得到<strong>1000个差异基因</strong>，然后我们感兴趣的<strong>GO通路在差异基因中有50个基因</strong>。<strong>总的基因有2w个，在这2w个基因中，我们感兴趣的GO有200个</strong>。我们想知道感兴趣GO相比于总体来说，在差异基因集中是不是富集的。</p>
+<p>fisher exact test输入的格式是列联表的格式，就像下面</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>差异基因</th>
+<th>无差异基因</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>在通路中</td>
+<td>50</td>
+<td>200-50=150</td>
+</tr>
+<tr class="even">
+<td>不在通路中</td>
+<td>1000-50=950</td>
+<td>19000-150=18850</td>
+</tr>
+</tbody>
+</table>
+<p>变成代码就是</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">test</span> &lt;- <span class="built_in">matrix</span>(c(50,950,150,18850),2)</span><br><span class="line">&gt; <span class="keyword">test</span></span><br><span class="line">     [,1]  [,2]</span><br><span class="line">[1,]   50   150</span><br><span class="line">[2,]  950 18850</span><br><span class="line">&gt; fisher.<span class="keyword">test</span>(<span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line">	Fisher's Exact <span class="keyword">Test</span> <span class="keyword">for</span> <span class="keyword">Count</span> Data</span><br><span class="line"></span><br><span class="line">data:  <span class="keyword">test</span></span><br><span class="line">p-value &lt; 2.2e-16</span><br><span class="line">alternative hypothesis: true odds <span class="keyword">ratio</span> is not equal to 1</span><br><span class="line">95 percent confidence interval:</span><br><span class="line"> 4.670869 9.230328</span><br><span class="line"><span class="keyword">sample</span> <span class="keyword">estimates</span>:</span><br><span class="line">odds <span class="keyword">ratio</span> </span><br><span class="line">   6.61189</span><br></pre></td></tr></table></figure>
+<p>看下我们某年的一个GO富集题目</p>
+<p>Usually you are interested in the function indicated by differentially expressed genes, for which GO enrichment is a widely used method. In order to find whether the differentially expression genes (downregulated, p&lt;=0.05) are enriched in “leukocyte activation during immune response” (GO term), please show a conclusive result using fisher exact test. Known genes annotated with this GO are listed in “GO_2_2.txt”</p>
+<p><strong>全部基因总共是14082个基因</strong>，前面差异表达做出来的<strong>差异基因是617个</strong>。然后GO_2_2.txt里面给出了leukocyte activation during immune response这个GO的基因，基因数目为193。我们就需要<strong>找差异基因中有多少这个GO通路的基因</strong>，答案里用到的intersect，其实就是取交集。我举个例子</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; total &lt;- c(<span class="number">1</span>:<span class="number">10</span>)</span><br><span class="line">&gt; <span class="built_in">part</span> &lt;- c(<span class="number">1</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">&gt; <span class="built_in">intersect</span>(<span class="built_in">part</span>,total)</span><br><span class="line">[<span class="number">1</span>] <span class="number">1</span> <span class="number">4</span> <span class="number">5</span></span><br><span class="line"></span><br><span class="line"># 还可以知道有多少</span><br><span class="line">&gt; <span class="built_in">length</span>(<span class="built_in">intersect</span>(<span class="built_in">part</span>,total))</span><br><span class="line">[<span class="number">1</span>] <span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>然后答案里的intersect出来是10个。这样列联表的数据就全了。</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>差异基因</th>
+<th>无差异基因</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>在通路中</td>
+<td>10</td>
+<td>193-10=183</td>
+</tr>
+<tr class="even">
+<td>不在通路中</td>
+<td>617-10=607</td>
+<td>14082-607-183-10=13282</td>
+</tr>
+</tbody>
+</table>
+<p>然后就可以做fisher了</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">test</span> &lt;- <span class="built_in">matrix</span>(c(10,607,183,13282),nrow = 2)</span><br><span class="line">&gt; <span class="keyword">test</span></span><br><span class="line">     [,1]  [,2]</span><br><span class="line">[1,]   10   183</span><br><span class="line">[2,]  607 13282</span><br><span class="line">&gt; fisher.<span class="keyword">test</span>(<span class="keyword">test</span>)</span><br><span class="line"></span><br><span class="line">	Fisher's Exact <span class="keyword">Test</span> <span class="keyword">for</span> <span class="keyword">Count</span> Data</span><br><span class="line"></span><br><span class="line">data:  <span class="keyword">test</span></span><br><span class="line">p-value = 0.5923</span><br><span class="line">alternative hypothesis: true odds <span class="keyword">ratio</span> is not equal to 1</span><br><span class="line">95 percent confidence interval:</span><br><span class="line"> 0.5609475 2.2650703</span><br><span class="line"><span class="keyword">sample</span> <span class="keyword">estimates</span>:</span><br><span class="line">odds <span class="keyword">ratio</span> </span><br><span class="line">  1.195686</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>然后有人提到答案里面其实是不准的，因为GO2_2的表中，有几个基因是不在总的基因里面的。</p>
+</blockquote>
+<p>画出列联表的步骤我觉得可以是这样的</p>
+<ul>
+<li>差异基因数目定下了，然后GO表和差异基因取交集，那么就得到了列联表的左上。</li>
+<li>然后差异基因减去左上，就得到了左下</li>
+<li>然后GO表减去左上，就得到了右上</li>
+<li>然后总的基因减去左上、左下、右上，就得到了右下。</li>
+</ul>
+<blockquote>
+<p>我只是按照了答案的思路来，不保证对哈。大家自行斟酌，原理就是这么个原理。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Statistics/" rel="tag"># Statistics</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/06/16/给女朋友写的生统资料-Part17/" rel="next" title="给女朋友写的生统资料_Part17">
+                  <i class="fa fa-chevron-left"></i> 给女朋友写的生统资料_Part17
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/06/19/给女朋友写的生统资料-Part19/" rel="prev" title="给女朋友写的生统资料_Part19">
+                  给女朋友写的生统资料_Part19 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#apply和function"><span class="nav-number">1.</span> <span class="nav-text">apply和function</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#function"><span class="nav-number">1.1.</span> <span class="nav-text">function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apply"><span class="nav-number">1.2.</span> <span class="nav-text">apply</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#差异基因表达"><span class="nav-number">2.</span> <span class="nav-text">差异基因表达</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#题目1"><span class="nav-number">2.1.</span> <span class="nav-text">题目1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#题目2"><span class="nav-number">2.2.</span> <span class="nav-text">题目2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#题目3"><span class="nav-number">2.3.</span> <span class="nav-text">题目3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#富集分析"><span class="nav-number">3.</span> <span class="nav-text">富集分析</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Just For Daisy</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Just For Daisy</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>
