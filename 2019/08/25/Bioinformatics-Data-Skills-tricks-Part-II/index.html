@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Charpter 3 这一章我觉得大家是可以好好看看的，这里面作者提到了一些我们有时候不太注意的概念：">
+<meta name="keywords" content="Bioinformatics,Shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bioinformatics Data Skills_tricks_Part II">
+<meta property="og:url" content="http://yoursite.com/2019/08/25/Bioinformatics-Data-Skills-tricks-Part-II/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="Charpter 3 这一章我觉得大家是可以好好看看的，这里面作者提到了一些我们有时候不太注意的概念：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-07T12:38:38.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bioinformatics Data Skills_tricks_Part II">
+<meta name="twitter:description" content="Charpter 3 这一章我觉得大家是可以好好看看的，这里面作者提到了一些我们有时候不太注意的概念：">
+  <link rel="canonical" href="http://yoursite.com/2019/08/25/Bioinformatics-Data-Skills-tricks-Part-II/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Bioinformatics Data Skills_tricks_Part II | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/25/Bioinformatics-Data-Skills-tricks-Part-II/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Just For Daisy">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Bioinformatics Data Skills_tricks_Part II
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-25 22:55:43" itemprop="dateCreated datePublished" datetime="2019-08-25T22:55:43+08:00">2019-08-25</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-07 20:38:38" itemprop="dateModified" datetime="2019-09-07T20:38:38+08:00">2019-09-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/阅读笔记/" itemprop="url" rel="index"><span itemprop="name">阅读笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="charpter-3">Charpter 3</h3>
+<p>这一章我觉得大家是可以好好看看的，这里面作者提到了一些我们有时候不太注意的概念：</p>
+<a id="more"></a>
+<ul>
+<li>streams</li>
+<li>redirection</li>
+<li>pipes</li>
+<li>working with running programs</li>
+<li>command substitution</li>
+</ul>
+<h4 id="working-with-streams-and-redirection">Working with Streams and Redirection</h4>
+<ul>
+<li><p><strong><em>Working with Streams and Redirection</em></strong> Unix利用stream（流）这种文本处理哲学对于生信是非常有用的，它允许我们处理数据之间的流，而非将数据一股脑地保存在内存里面。 想象一下，如果你想要整合两个超大的文件在一起，正常操作是，打开一个大文件，复制，然后打开另一个大文件，粘贴到另一个大文件里面。这里的每一步都会耗费很大的内存。但Unix则会将整合的两个大文件的内容打印到 <strong>standard output stream（标准输出流）</strong>，然后我们可以从终端重定向标准输出流到我们想要的文件。</p></li>
+<li><p><strong><em>Redirecting Standard Error</em></strong> 标准错误流是用来输出errors, warnings, and messages meant to be read by the user。</p>
+<blockquote>
+<p>默认情况下，标准输出流和标准错误流如果没有重定向的话，都是输出到终端上的。但也可以输出到文件。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; $ ls -l tb1<span class="selector-class">.fasta</span> leafy1.fasta</span><br><span class="line">&gt; ls: leafy1<span class="selector-class">.fasta</span>: No such file or directory</span><br><span class="line">&gt; -rw-r--r-- <span class="number">1</span> vinceb staff <span class="number">0</span> Feb <span class="number">21</span> <span class="number">21</span>:<span class="number">58</span> tb1.fasta</span><br><span class="line">&gt; </span><br><span class="line">&gt; $ ls -l tb1<span class="selector-class">.fasta</span> leafy1<span class="selector-class">.fasta</span> &gt; listing<span class="selector-class">.txt</span> <span class="number">2</span>&gt; listing.stderr</span><br><span class="line">&gt; $ cat listing.txt</span><br><span class="line">&gt; -rw-r--r-- <span class="number">1</span> vinceb staff <span class="number">152</span> Jan <span class="number">20</span> <span class="number">21</span>:<span class="number">24</span> tb1.fasta</span><br><span class="line">&gt; $ cat listing.stderr</span><br><span class="line">&gt; ls: leafy1<span class="selector-class">.fasta</span>: No such file or directory</span><br><span class="line">&gt; </span><br><span class="line">&gt; $ ls -l tb1<span class="selector-class">.fasta</span> leafy1<span class="selector-class">.fasta</span> &gt; listing<span class="selector-class">.txt</span> <span class="number">2</span>&gt;&amp;<span class="number">1</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote></li>
+<li><p>有时候，我们并不想输出报错信息，或者输出物理储存里可能会拖慢程序的速度，这时候Unix操作系统就为我们提供了一个虚假的储存（pseudodevice）：/dev/null 。凡是写到/dev/null里的都会消失。</p></li>
+<li><p>tail有一个骚操作是tail -f。设想一下你把标准错误流写到了stderr.txt文件里面，你可能会用tail时不时地看下，看有什么报错信息。但用了tail -f，你就可以持续地监控这个文件了。</p></li>
+<li><p><strong><em>Using Standard Input Redirection</em></strong> Unix也提供一种叫标准输入流（standard input ）的重定向操作。通常情况下，标准输入流是来自于你的键盘。但是用 &lt; 这个重定向操作符，我们也可以直接从一个文件里面读取标准输入流。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 从inputfile输入标准输入流，然后标准输出流到outputfile</span></span><br><span class="line">$ program <span class="params">&lt; inputfile &gt;</span> outputfile</span><br></pre></td></tr></table></figure>
+<p>事实上，许多程序也可以直接用file参数来读取文件，而不通过标准输入流。有些程序（生信里面很多）则会用 - 这个符号来表示他们应该用标准输入流。</p></li>
+<li><p><strong><em>The Almighty Unix Pipe: Speed and Beauty in One</em></strong> 管道跟我们上面提到的重定向很像，但其不是重定向一个程序的结果到一个文件，而是把程序的结果重定向成另一个程序的标准输入。但标准错误还是定向到你的终端屏幕上。</p></li>
+<li><p>管道可以连接grep，cat等一系列程序。还可以连接其他语言的输入和输出。</p></li>
+<li><p><strong><em>Combining Pipes and Redirection</em></strong> 假如progarm 1是对input.txt 执行操作，然后输出结果到标准输出流，输出诊断结果到标准错误流。而program 2则是接受program 1的输出作为输入，然后也输出诊断结果到标准错误流。这时候，如果我们还是按正常操作，program 1和2的诊断结果就会在屏幕上混淆。但我们可以这样</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">program1 <span class="built_in">input</span>.txt <span class="number">2</span>&gt; program1.<span class="built_in">stderr</span> | \</span><br><span class="line">program2 <span class="number">2</span>&gt; program2.<span class="built_in">stderr</span> &gt; results.txt</span><br></pre></td></tr></table></figure></li>
+<li><p>因为管道只能连接<strong>标准输出流</strong>。但如果我们想同时在结果里面看到标准输出流和标准错误流的信息。那么就可以把标准错误流重定向到标准输出流那里。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># <span class="number">2</span>&gt;&amp;<span class="number">1</span> 操作就是把标准错误流重定向到标准输出流</span><br><span class="line">$ program1 <span class="number">2</span>&gt;&amp;<span class="number">1</span> | grep <span class="string">"error"</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong><em>Even More Redirection: A tee in Your Pipe</em></strong> 另一个骚操作：储存中间文件。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用了tee操作，既可以把program1的标准输出流储存成中间文件，也可以输出给program2</span></span><br><span class="line">$ program1 input.txt <span class="params">| tee intermediate-file.txt |</span> program2 &gt; results.txt</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="managing-and-interacting-with-processes">Managing and Interacting with Processes</h4>
+<p>这里提到了</p>
+<ul>
+<li>running and managing processes in the background</li>
+<li>killing errant processes</li>
+<li><p>checking process exit status</p></li>
+<li><p>当我们在shell里面开始运行命令之后，我们是不能再对shell进行操作的。短的命令还好，长的命令就非常地蛋疼了。这时候我们就可以在运行命令时候加入 &amp;，来让其在后台运行。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 这里的26577是proces ID或者说PID（进程ID）</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> program1 input.txt &gt; results.txt &amp;</span></span><br><span class="line">[1] 26577</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 这里的1是<span class="built_in">jobs</span> IDs</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">jobs</span></span></span><br><span class="line">[1]+ Running program1 input.txt &gt; results.txt</span><br></pre></td></tr></table></figure></li>
+<li><p>为了把后台运行的命令带到前台来，就可以用fg（for foreground）命令。当你的后台有许多的命令的时候，fg %&lt;num&gt;就可以选择把对应的进程带到前台来。</p>
+<blockquote>
+<p>&lt;num&gt;就是所谓的jobs ID。</p>
+<p>当你的后台进程只有一个的时候，fg和fg %1是等效的。</p>
+</blockquote></li>
+<li><p>关闭我们的终端，会发送一个Hangup signal（SIGHUP）信号给由已关闭终端之前开启的所有进程。然后那些进程受到这些信号之后，几乎都会立刻停止运行。</p></li>
+<li><p>也可以把前台运行的放到后台去。这时候你需要先用ctrl+z发送挂起信号（suspend），程序就会暂停。然后再用bg %&lt;num&gt;放到后台。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> program1 input.txt &gt; results.txt <span class="comment"># forgot to append ampersand</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="comment"># enter control-z</span></span></span><br><span class="line">[1]+ Stopped program1 input.txt &gt; results.txt</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">bg</span></span></span><br><span class="line">[1]+ program1 input.txt &gt; results.txt</span><br></pre></td></tr></table></figure></li>
+<li><p>杀进程这部分详细内容在作者Github这一章节的README上有。</p></li>
+<li><p><strong><em>Exit Status: How to Programmatically Tell Whether Your Command Worked</em></strong>：Exit Status退出码可以帮助我们知晓一个程序是否正确地运行完成了。标准地来说，0 exit status就代表程序正确运行了，非0就代表不正确。</p>
+<blockquote>
+<p>这就是有时候你程序跑错了，经常会出现的Exit status XXX</p>
+<p>$?代表了退出码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash"> $ program1 input.txt &gt; results.txt</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> $ <span class="built_in">echo</span> $?</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 0</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"></span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>有时候，开发者在开放一款软件的时候，会忘记考虑到退出码这种情况。所以你会发现有时候错误地运行了，还是zero-exit status。</p>
+</blockquote></li>
+<li><p>退出码是很有用的，因为他可以让我们链式地编程。即后一个命令是否执行取决于前一个命令的退出码。</p>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 前一个命令成功，就执行后续命令（&amp;&amp;）</span></span><br><span class="line"><span class="meta"># 防止程序1失败了，程序2还是读这个文件</span></span><br><span class="line"></span><br><span class="line">$ program1 input.txt &gt; intermediate-results.txt &amp;&amp; \</span><br><span class="line">program2 intermediate-results.txt &gt; results.txt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta"># 前一个命令失败，就执行后续命令（||）</span></span><br><span class="line"><span class="meta"># 在输出warning的时候比较有用</span></span><br><span class="line">$ program1 input.txt &gt; intermediate-results.txt || \</span><br><span class="line">echo <span class="string">"warning: an error occurred"</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果状态码，只想连续执行的话。就用 <code>;</code></p>
+</blockquote></li>
+</ul>
+<h4 id="command-substitution">Command Substitution</h4>
+<ul>
+<li><p>命令替换可以把一个命令的输出结果，嵌入另一个命令里面</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ grep -c <span class="string">'^&gt;'</span> <span class="selector-tag">input</span>.fasta</span><br><span class="line"><span class="number">416</span></span><br><span class="line">$ echo <span class="string">"There are $(grep -c '^&gt;' input.fasta) entries in my FASTA file."</span></span><br><span class="line">There are <span class="number">416</span> entries <span class="keyword">in</span> my FASTA file.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>$()和``是等价的</p>
+</blockquote></li>
+<li><p>使用这个命令，我们可以很方便地创建当前时间文件夹</p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir results-$(<span class="keyword">date</span> +%F)</span><br><span class="line">$ <span class="keyword">ls</span> results<span class="number">-2015</span><span class="number">-04</span><span class="number">-13</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>+%F 这种格式对于日期命令的文件夹是很有帮助的，因为到时候排序的时候就会按日期来排</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt;$ ls -l</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:23 1999-07-01</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:22 2000-12-19</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:22 2011-02-03</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:22 2012-02-13</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:23 2012-05-26</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:22 2012-05-27</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:23 2012-07-04</span><br><span class="line">&gt;drwxr-xr-x<span class="number"> 2 </span>vinceb staff<span class="number"> 68 </span>Feb<span class="number"> 3 </span>23:23 2012-07-05</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+
+</blockquote></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Bioinformatics/" rel="tag"># Bioinformatics</a>
+            
+              <a href="/tags/Shell/" rel="tag"># Shell</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/08/21/Bioinformatics-Data-Skills-tricks-Part-I/" rel="next" title="Bioinformatics Data Skills_tricks_Part I">
+                  <i class="fa fa-chevron-left"></i> Bioinformatics Data Skills_tricks_Part I
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#charpter-3"><span class="nav-number">1.</span> <span class="nav-text">Charpter 3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#working-with-streams-and-redirection"><span class="nav-number">1.1.</span> <span class="nav-text">Working with Streams and Redirection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#managing-and-interacting-with-processes"><span class="nav-number">1.2.</span> <span class="nav-text">Managing and Interacting with Processes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#command-substitution"><span class="nav-number">1.3.</span> <span class="nav-text">Command Substitution</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Just For Daisy</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Just For Daisy</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>

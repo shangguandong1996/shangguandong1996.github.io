@@ -53,19 +53,19 @@
   };
 </script>
 
-  <meta name="description" content="因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。">
-<meta name="keywords" content="R">
+  <meta name="description" content="老板最近在群里发了这篇文章，大致扫了下，发现这篇文章梳理了10多年来RNA测序相关的知识，几乎涵盖了市面上所有RNA测序相关的技术，而且各项技术的发展、优缺点都讲的比较详细，是一篇非常好的综述。所以这里我决定大致翻译下这篇文章。">
+<meta name="keywords" content="Bioinformatics">
 <meta property="og:type" content="article">
-<meta property="og:title" content="给女朋友写的生统资料_Part1">
-<meta property="og:url" content="http://yoursite.com/2019/05/08/给女朋友写的生统资料-Part1/index.html">
+<meta property="og:title" content="RNA sequencing: the teenage years">
+<meta property="og:url" content="http://yoursite.com/2019/08/04/RNA-sequencing-the-teenage-years/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Blog">
-<meta property="og:description" content="因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。">
+<meta property="og:description" content="老板最近在群里发了这篇文章，大致扫了下，发现这篇文章梳理了10多年来RNA测序相关的知识，几乎涵盖了市面上所有RNA测序相关的技术，而且各项技术的发展、优缺点都讲的比较详细，是一篇非常好的综述。所以这里我决定大致翻译下这篇文章。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-31T13:49:51.867Z">
+<meta property="og:updated_time" content="2019-09-07T12:40:47.305Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="给女朋友写的生统资料_Part1">
-<meta name="twitter:description" content="因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。">
-  <link rel="canonical" href="http://yoursite.com/2019/05/08/给女朋友写的生统资料-Part1/">
+<meta name="twitter:title" content="RNA sequencing: the teenage years">
+<meta name="twitter:description" content="老板最近在群里发了这篇文章，大致扫了下，发现这篇文章梳理了10多年来RNA测序相关的知识，几乎涵盖了市面上所有RNA测序相关的技术，而且各项技术的发展、优缺点都讲的比较详细，是一篇非常好的综述。所以这里我决定大致翻译下这篇文章。">
+  <link rel="canonical" href="http://yoursite.com/2019/08/04/RNA-sequencing-the-teenage-years/">
 
 
 <script id="page-configurations">
@@ -79,7 +79,7 @@
   };
 </script>
 
-  <title>给女朋友写的生统资料_Part1 | Shawn's Blog</title>
+  <title>RNA sequencing: the teenage years | Shawn's Blog</title>
   <meta name="generator" content="Hexo 3.9.0">
   
 
@@ -256,7 +256,7 @@
   
   
   <div class="post-block post">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/08/给女朋友写的生统资料-Part1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/04/RNA-sequencing-the-teenage-years/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Just For Daisy">
@@ -268,7 +268,7 @@
       <meta itemprop="name" content="Shawn's Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">给女朋友写的生统资料_Part1
+        <h1 class="post-title" itemprop="name headline">RNA sequencing: the teenage years
 
           
         </h1>
@@ -284,7 +284,7 @@
                 
               
 
-              <time title="创建时间：2019-05-08 10:42:12" itemprop="dateCreated datePublished" datetime="2019-05-08T10:42:12+08:00">2019-05-08</time>
+              <time title="创建时间：2019-08-04 20:39:38" itemprop="dateCreated datePublished" datetime="2019-08-04T20:39:38+08:00">2019-08-04</time>
             </span>
           
             
@@ -295,7 +295,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-08-31 21:49:51" itemprop="dateModified" datetime="2019-08-31T21:49:51+08:00">2019-08-31</time>
+                <time title="修改时间：2019-09-07 20:40:47" itemprop="dateModified" datetime="2019-09-07T20:40:47+08:00">2019-09-07</time>
               </span>
             
           
@@ -305,7 +305,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生物医学统计课/" itemprop="url" rel="index"><span itemprop="name">生物医学统计课</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/文献阅读/" itemprop="url" rel="index"><span itemprop="name">文献阅读</span></a></span>
 
                 
                 
@@ -324,48 +324,49 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>因为深感生统的节奏比较快，可能女票跟不上节奏，所以写了一个简略的manual，只针对生统的一些相关操作，不涉及高深的R操作。如果大家觉得还要加什么东西，可以在下面留言。</p>
+        <p>老板最近在群里发了这篇文章，大致扫了下，发现这篇文章梳理了10多年来RNA测序相关的知识，几乎涵盖了市面上所有RNA测序相关的技术，而且各项技术的发展、优缺点都讲的比较详细，是一篇非常好的综述。所以这里我决定大致翻译下这篇文章。</p>
 <a id="more"></a>
-<h2 id="前期准备">前期准备</h2>
-<ul>
-<li>语言问题:</li>
-</ul>
-<p>对于 R 或者 R studio来说，我非常建议把语言更改成英文。这样，在你报错的时候，比较方便去搜索</p>
-<ul>
-<li>工作路径：</li>
-</ul>
-<p>对于有R studio的来说，频繁地切换 <code>setwd</code> 和 <code>getwd</code> 可能不是一个很好的选择。所以我比较推荐新建一个Project，这样你每次你的任务都会是独立的。新建完Project之后你就可以把作业相关的数据放在你的Project里面。在后面读取的时候，就不用切换 <code>setwd</code> 或者打一大串目录了。</p>
-<ul>
-<li>保存问题：</li>
-</ul>
-<p>我比较推荐的是在Tools-Global Options—General那里，将Save Worksapce to .RData on exit那里设置为Never。这可能会导致你每次打开你的Project，变量都还得重新打一遍。但这可以保证你的代码的可重复性。</p>
-<ul>
-<li>镜像及安装问题：</li>
-</ul>
-<p>生统课上的如果包都很小，所以镜像设置其实是无所谓的。 如果想安装某个包的话，使用如下代码 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">## 以安装pwr包为例，注意加引号</span><br><span class="line">#install.packages(&quot;pwr&quot;)</span><br></pre></td></tr></table></figure></p>
-<h2 id="数据读取">数据读取</h2>
-<p>生统课上用到的文件一般给的都是 txt 或者 csv 文件，这意味一般着只需要使用 <code>read.table</code> 这个命令来读取文件就可以了。 让我们先来看一下read.table这个函数怎么用。 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?read.table</span><br></pre></td></tr></table></figure></p>
 <blockquote>
-<p>不懂的时候寻求谷歌或者?+命令，是一个很好的习惯</p>
+<p>由于我比较懒，并不会逐字逐句去翻译，加上我偶尔会加上自己的一点看法，可能会比较乱，大家如果感兴趣还是可以去看原始的文章。</p>
+<p>对于一些专业术语，我会保留其英文。因为我觉得中文解释不了这些单词。但我会尽量放一些能解释这些单词的链接。</p>
+<p>这篇综述的参考文献列的很多，大家要是对某个部分感兴趣可以直接看参考文献。</p>
 </blockquote>
-<p>你会发现read.table()里面跟了一大堆东西，其中跟我们可能相关的是</p>
-<ul>
-<li>file：代表你要读的文件路径</li>
-<li>header：表达你是否要添加表头，默认值是FALSE，我们一般要设置为TRUE</li>
-<li>sep：sep代表是你用什么样的形式来分割你读取的文件，一般生统的文件可能会以空格，制表符，逗号来分割。分别对应<code>sep = " "，sep = ","，sep = "\t"</code></li>
-</ul>
-<p>我们来尝试读一个文件 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">test1 &lt;- read.table(&quot;rawdata/test1.txt&quot;,header = T)</span><br><span class="line">head(test1)</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">##   yield seed</span><br><span class="line">## <span class="number">1</span>   <span class="number">383</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">2</span>   <span class="number">406</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">3</span>   <span class="number">351</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">4</span>   <span class="number">400</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">5</span>   <span class="number">390</span>    <span class="number">1</span></span><br><span class="line">## <span class="number">6</span>   <span class="number">361</span>    <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>RNA-Seq的发展已经历经了10余年，现在几乎已经成为了各种生物学研究的标配。在RNA-Seq的应用中，differential gene expression（DGE，差异基因表达）无疑是最广泛的。相比于以前，DGE的步骤并没有太多的区别：实验部分还是提取RNA、mRNA富集或者核糖体去除，cDNA合成、建库。测序深度一般就是10-30M reads。测序完成之后就是分析：比对/或者组装（取决于有参还是无参），计数，过滤或者标准化，然后就是应用统计模型来找到差异基因/转录本。</p>
+<p>除了DGE之外，RNA-Seq还可以帮助我们理解如可变剪切、非编码RNA、enhancer RNA等问题。当然，这些技术大部分还是利用illumina的short-read来做的。但近几年来，在long-read方面的技术也逐步在帮助我们解决一些short-read所不能解决的问题。</p>
+<p>然后作者概述了下他们接下来要讲的内容，这里不再一一赘述。值得一提的是，作者自己也提到了，由于篇幅的限制，作者有些RNA-Seq的技术并没有提到，包括非编码RNA的转录组、原核生物的转录组、表观转录组（如RNA修饰）等。</p>
 <blockquote>
-<ul>
-<li><p>这里我们用了 header = T ，这样我们的数据就会有表头，或者说列名了。即 yield 和 seed。</p></li>
-<li><p>TRUE和T是等价的，同理FALSE和F也是等价的。</p></li>
-<li><p>csv是本质上是用逗号分割的文件，所以我们在读的时候加上 <code>sep = ","</code> 即可。</p></li>
-<li><p>head代表的是你只输出你数据的前几行。同理，tail输出后几行。</p></li>
-<li>再次提醒一遍，感觉不懂命令是什么时候用<code>?</code>或者谷歌。</li>
-<li><p>你还可以用row.names=1，来将第一列当作行名。</p></li>
-</ul>
+<p>但作者给出了参考的综述，大家感兴趣可以看看。</p>
 </blockquote>
+<h2 id="designing-better-rna-seq-experiments">Designing better RNA-seq experiments</h2>
+<p>这一部分作者从重复数目、测序深度以及单双端的选择三个方面来探讨如何设计更好的RNA-Seq实验。</p>
+<h3 id="replication-and-experimental-power">Replication and experimental power</h3>
+<p>总得来说，重复的重要性是大于测序深度和read length的。尽管RNA-Seq的技术稳定性要高于以前的芯片，但做生物学重复还是很有必要的。用额外的重复可以帮助我们鉴定离群点，从而在进行下一步分析前，移除离群点或者下调这些离群点的权重。</p>
+<p>决定重复的数目需要考虑到以下几个方面</p>
+<ul>
+<li>effect size</li>
+<li>within-group variation</li>
+<li>acceptable false-positive</li>
+<li>false-negative rates</li>
+</ul>
+<p>但事实上，决定适合的重复数目并不是一件容易的事情。一个48个重复的酵母研究发现，当只含有3个重复的时候，大部分的差异表达检测工具只能检测20%-40%的差异基因。这个研究实际上推荐的是大于6个重复。还有个研究推荐4个重复，不过其也强调要考虑衡量样本的生物学内在差异性。比如说有些生物学差异很大的样本，例如肿瘤患者的组织，就需要增加更多的重复了。</p>
+<h3 id="determining-the-optimal-read-depth">Determining the optimal read depth</h3>
+<p>一般来说我们是测10-30M reads。但如果你的样本重复够多，且你只关注一些高表达基因的差异，那么对于很多样本来说，1M reads就可以有差不多的效果了。reads depth的估计可以检查在样本间的reads分布以及饱和曲线。</p>
+<h3 id="choosing-parameters-read-length-and-single-end-or-paired-end-sequencing">Choosing parameters: read length and single-end or paired-end sequencing</h3>
+<p>对于很多测序，read length是越高越好的，因为其可以保证更多的DNA覆盖率。但对于RNA-Seq来说，并不是那么的重要。因为你只需要知道这个read来源于哪里即可，过长的read对于最终的定量并没有太多的影响。当然，如果你想要分析isofrom，那更长的read是会有帮助的。</p>
+<p>SE和PE的选择也是如此，单端的差异基因表达分析，其实是差不多的。但如果涉及到融合基因，可变剪切，新转录本发现等等，那么PE就会更有优势了。</p>
+<blockquote>
+<p>不过现在单端价格和双端价格好像已经是一样了</p>
+</blockquote>
+<h2 id="beyond-bulk-rna-analysis">Beyond bulk RNA analysis</h2>
+<p>这部分讲了单细胞测序和空间转录组。我觉得大家要是感兴趣还是别看我的翻译了……毕竟二手的翻译不如自己看的清楚。要是看的时候有什么问题，可以在下面交流。</p>
+<h3 id="single-cell-analysis">Single-cell analysis</h3>
+<p>作者这里提了下单细胞的不同建库方法，不过我觉得要是想看详细的还是建议去看对应的单细胞综述。不过这里作者提到了要根据你自己的目的去选择对应的单细胞方法，即考虑测序的深度（每个细胞测尽可能多的转录本）和测序的广度（测更多的细胞）以及花费。一般来说，plate-based 或者 microfluidic methods 捕捉的细胞数目较少，但每个细胞能检测到更多的基因。而droplet-based systems 则可以捕捉更多的细胞</p>
+<h3 id="spatially-resolved-rna-seq-methods">Spatially resolved RNA-seq methods</h3>
+<p>不管是bulk还是single-cell，实际上最后的测序结果都是丢失空间信息的。而空间信息的建立对于我们探究细胞环境与细胞表达的关系是至关重要的。文章里面提到了两种空间转录组的方法：“spatial encoding”和“in situ transcriptomics”。</p>
+<p>spatial encoding又分成两种，一种是isolating spatially restricted cells（比如是显微激光切割，LCM（laser-capture microdissection ）），另一种是利用barcoding。前者已经在多个组织样本中实现了，但其要求的设备很多，比较难以推广。现在的<strong>10X 空间转录组</strong>和<strong>Slide-Seq</strong>都是用的barcoding来标记RNA，从而记录空间信息。不过，现在的空间转录组很多分辨率并没有达到单细胞的水平，这也是一个比较麻烦的地方。</p>
+<p>In situ transcriptomics用的是另一种思路，即单分子荧光原位杂交。这种方法尽管只能检测少量转录本，但其的确可以直接检测RNA，提供组织信息以及微环境，甚至还可以产生亚细胞数据。不过这个技术也需要显微成像设备的支持。</p>
+<h2 id="beyond-analysis-of-gene-expression">Beyond analysis of gene expression</h2>
+<p>前面都是RNA表达层面的，这部分作者讲了RNA结构分析，RNA-RNA互作以及RNA蛋白互作的研究方法，大家感兴趣可以自己去看。</p>
 
     </div>
 
@@ -381,7 +382,7 @@
           
           <div class="post-tags">
             
-              <a href="/tags/R/" rel="tag"># R</a>
+              <a href="/tags/Bioinformatics/" rel="tag"># Bioinformatics</a>
             
           </div>
         
@@ -391,8 +392,8 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2019/02/17/MACS2的原理介绍/" rel="next" title="MACS2的原理介绍">
-                  <i class="fa fa-chevron-left"></i> MACS2的原理介绍
+                <a href="/2019/06/19/给女朋友写的生统资料-Part19/" rel="next" title="给女朋友写的生统资料_Part19">
+                  <i class="fa fa-chevron-left"></i> 给女朋友写的生统资料_Part19
                 </a>
               
             </div>
@@ -401,8 +402,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2019/05/08/给女朋友写的生统资料-Part2/" rel="prev" title="给女朋友写的生统资料_Part2">
-                  给女朋友写的生统资料_Part2 <i class="fa fa-chevron-right"></i>
+                <a href="/2019/08/21/Bioinformatics-Data-Skills-tricks-Part-I/" rel="prev" title="Bioinformatics Data Skills_tricks_Part I">
+                  Bioinformatics Data Skills_tricks_Part I <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -452,7 +453,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前期准备"><span class="nav-number">1.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据读取"><span class="nav-number">2.</span> <span class="nav-text">数据读取</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#designing-better-rna-seq-experiments"><span class="nav-number">1.</span> <span class="nav-text">Designing better RNA-seq experiments</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#replication-and-experimental-power"><span class="nav-number">1.1.</span> <span class="nav-text">Replication and experimental power</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#determining-the-optimal-read-depth"><span class="nav-number">1.2.</span> <span class="nav-text">Determining the optimal read depth</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#choosing-parameters-read-length-and-single-end-or-paired-end-sequencing"><span class="nav-number">1.3.</span> <span class="nav-text">Choosing parameters: read length and single-end or paired-end sequencing</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beyond-bulk-rna-analysis"><span class="nav-number">2.</span> <span class="nav-text">Beyond bulk RNA analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#single-cell-analysis"><span class="nav-number">2.1.</span> <span class="nav-text">Single-cell analysis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spatially-resolved-rna-seq-methods"><span class="nav-number">2.2.</span> <span class="nav-text">Spatially resolved RNA-seq methods</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beyond-analysis-of-gene-expression"><span class="nav-number">3.</span> <span class="nav-text">Beyond analysis of gene expression</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->
