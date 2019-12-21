@@ -64,7 +64,7 @@
 <meta property="og:image" content="https://shangguandong-1253397819.cos.ap-shanghai.myqcloud.com/picgo/20191216164341.png">
 <meta property="og:image" content="https://shangguandong-1253397819.cos.ap-shanghai.myqcloud.com/picgo/20191216164604.png">
 <meta property="og:image" content="https://shangguandong-1253397819.cos.ap-shanghai.myqcloud.com/picgo/20191216165318.png">
-<meta property="og:updated_time" content="2019-12-16T10:23:41.171Z">
+<meta property="og:updated_time" content="2019-12-16T10:24:58.183Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从csv输出序列成fasta格式">
 <meta name="twitter:description" content="昨天老哥让我帮忙看看一个R脚本">
@@ -288,7 +288,7 @@
                 
               
 
-              <time title="创建时间：2019-12-16 17:59:33 / 修改时间：18:23:41" itemprop="dateCreated datePublished" datetime="2019-12-16T17:59:33+08:00">2019-12-16</time>
+              <time title="创建时间：2019-12-16 17:59:33 / 修改时间：18:24:58" itemprop="dateCreated datePublished" datetime="2019-12-16T17:59:33+08:00">2019-12-16</time>
             </span>
           
             
@@ -334,7 +334,7 @@
 <figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">a &lt;- read.csv(<span class="string">"XX.csv"</span>,sep = <span class="string">","</span>,header = <span class="literal">T</span>,stringsAsFactors = <span class="literal">F</span>) <span class="comment"># 注意下不要变成因子</span></span><br><span class="line">b &lt;- a[,c(<span class="string">"Sequence"</span>)] <span class="comment"># 注意下变成字符串就行，不要变成数据框</span></span><br><span class="line"></span><br><span class="line">b &lt;- as.list(b)</span><br><span class="line"></span><br><span class="line"><span class="keyword">library</span>(Biostrings)</span><br><span class="line"><span class="keyword">library</span>(seqinr)</span><br><span class="line"></span><br><span class="line">SeqName&lt;-<span class="number">1</span>:<span class="number">36540</span></span><br><span class="line">write.fasta(b, names=SeqName, file=<span class="string">"b.fasta"</span>, open=<span class="string">'w'</span>, nbchar=<span class="number">60</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="number">1</span></span><br><span class="line">gGGGGYGGGGGYGGGGGGGYGQR</span><br><span class="line">&gt;<span class="number">2</span></span><br><span class="line">vAGGGGGGGGGGGGGAGGGGGGEEGAGk</span><br></pre></td></tr></table></figure>
 <p>一个可以练习的版本</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">library(stringi)</span><br><span class="line">a &lt;- data.frame(Sequence = stri_rand_strings(5,sample(1:10,5)),</span><br><span class="line">                name = paste0(<span class="string">"str_"</span>,1:5),</span><br><span class="line">                stringsAsFactors = F)</span><br><span class="line"></span><br><span class="line">seq_list &lt;- as.list(a<span class="variable">$Sequence</span>)</span><br><span class="line">library(seqinr)</span><br><span class="line">write.fasta(seq_list,names = a<span class="variable">$name</span>, file=<span class="string">"a.fa"</span>, open=<span class="string">'w'</span>, nbchar=60)</span><br></pre></td></tr></table></figure>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">library</span>(stringi)</span><br><span class="line">a &lt;- data.frame(Sequence = stri_rand_strings(<span class="number">5</span>,sample(<span class="number">1</span>:<span class="number">10</span>,<span class="number">5</span>)),</span><br><span class="line">                name = paste0(<span class="string">"str_"</span>,<span class="number">1</span>:<span class="number">5</span>),</span><br><span class="line">                stringsAsFactors = <span class="literal">F</span>)</span><br><span class="line"></span><br><span class="line">seq_list &lt;- as.list(a$Sequence)</span><br><span class="line"><span class="keyword">library</span>(seqinr)</span><br><span class="line">write.fasta(seq_list,names = a$name, file=<span class="string">"a.fa"</span>, open=<span class="string">'w'</span>, nbchar=<span class="number">60</span>)</span><br></pre></td></tr></table></figure>
 <p>PS:</p>
 <ul>
 <li><p>我觉得这种输出fasta还是考虑用Pyhon或者linux上的工具吧。感觉这个函数好像写的不太好。</p></li>
@@ -377,6 +377,10 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/12/21/ebi的生信培训课程/" rel="prev" title="ebi的生信培训课程">
+                  ebi的生信培训课程 <i class="fa fa-chevron-right"></i>
+                </a>
               
             </div>
           </div>
@@ -438,7 +442,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -490,7 +494,9 @@
         
           
         
-        <span class="site-state-item-count">4</span>
+          
+        
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[ebi的生信培训课程]]></title>
+    <url>%2F2019%2F12%2F21%2Febi%E7%9A%84%E7%94%9F%E4%BF%A1%E5%9F%B9%E8%AE%AD%E8%AF%BE%E7%A8%8B%2F</url>
+    <content type="text"><![CDATA[最近逛twiiter的时候，偶然发现有位老姐分享了关于植物的生信培训课程。 点进去地址的时候，发现是这个样子的。可以看到EBI还有很多网上培训课程。 还分了不同的种类、针对人群、时常 随便点进去一个。很多都是视频课程，不过其用的是youtube的播放器，还是得做一些骚操作的。 还有对应的PPT资料（比市面上的培训班好多了╰(￣▽￣)╭） 然后我还发现了PPT的合集地址，大家可以先看下PPT，然后感兴趣的去看对应的视频。 地址 直接用 1wget -c -r ftp://ftp.ebi.ac.uk/pub/training/2017/ 我这里是不知道培训资料有多大，生怕把电脑储存搞爆，所以按年份下下试试。大家储存大的，可以直接 12&gt; wget -c -r ftp://ftp.ebi.ac.uk/pub/training/&gt;]]></content>
+      <categories>
+        <category>生信操作</category>
+      </categories>
+      <tags>
+        <tag>Bioinformatics</tag>
+        <tag>course</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[从csv输出序列成fasta格式]]></title>
     <url>%2F2019%2F12%2F16%2F%E4%BB%8Ecsv%E8%BE%93%E5%87%BA%E5%BA%8F%E5%88%97%E6%88%90fasta%E6%A0%BC%E5%BC%8F%2F</url>
     <content type="text"><![CDATA[昨天老哥让我帮忙看看一个R脚本 1234567891011121314a &lt;- read.csv("XX.csv",sep = ",",header = T)b &lt;- a[c("Sequence")]class(a)class(b)head(b)library(Biostrings)BiocManager::install("seqinr")library(seqinr)SeqName&lt;-1:36540write.fasta(b, names=SeqName, file="b.fasta", open='w', nbchar=60, as.string = FALSE)s = readDNAStringSet("b.fasta")head(s)View(s) 然后说问题在于他写的脚本输出的结果总是没有分隔符。看了下，实际上就是用seqinr包的write.fasta函数去把一串序列给保存成fa格式。因为之前没有接触过读取字符串，然后输出成fa的需求，也没有其他的工具可以代替，所以只能看下write.fasta的说明 1?write.fasta 然后看到这句话 就猜到如果是多条序列的话，应该导入的是list格式。因为从csv里面最后读取出来是字符串向量，还得搜下怎么转成list。 地址为：Convert a vector into a list, each element in the vector as an element in the list 然后就可以了 12345678910a &lt;- read.csv("XX.csv",sep = ",",header = T,stringsAsFactors = F) # 注意下不要变成因子b &lt;- a[,c("Sequence")] # 注意下变成字符串就行，不要变成数据框b &lt;- as.list(b)library(Biostrings)library(seqinr)SeqName&lt;-1:36540write.fasta(b, names=SeqName, file="b.fasta", open='w', nbchar=60) 1234&gt;1gGGGGYGGGGGYGGGGGGGYGQR&gt;2vAGGGGGGGGGGGGGAGGGGGGEEGAGk 一个可以练习的版本 12345678library(stringi)a &lt;- data.frame(Sequence = stri_rand_strings(5,sample(1:10,5)), name = paste0("str_",1:5), stringsAsFactors = F)seq_list &lt;- as.list(a$Sequence)library(seqinr)write.fasta(seq_list,names = a$name, file="a.fa", open='w', nbchar=60) PS: 我觉得这种输出fasta还是考虑用Pyhon或者linux上的工具吧。感觉这个函数好像写的不太好。 附上我怎么找到stri_rand_strings函数]]></content>
