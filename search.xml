@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[从Uniprot那里得到对应的拟南芥基因ID]]></title>
+    <url>%2F2019%2F12%2F27%2F%E4%BB%8EUniprot%E9%82%A3%E9%87%8C%E5%BE%97%E5%88%B0%E5%AF%B9%E5%BA%94%E7%9A%84%E6%8B%9F%E5%8D%97%E8%8A%A5%E5%9F%BA%E5%9B%A0ID%2F</url>
+    <content type="text"><![CDATA[最近有个需求，就是给定一个蛋白质的ID号，就知道它是什么基因。比如说O49397。但有个问题是，我并不知道这是个什么东西，于是我就去搜了下。 发现这其实是Uniport网站的蛋白质ID。 然后发现网站还提供了ID转换的服务，但发现了几个问题 一个问题是我的蛋白质ID有很多且来自于R操作中的中间步骤，所以不想复制粘贴到那个框里面，其次是To那里实际上不提供转换成Araport的服务（植物没人权╮（╯＿╰）╭）。所以不得不去寻找其他方法。 我想到Uniport应该是提供了ID mapping的文件下载的，就去搜索了下，果然找到了。 3702其实就是拟南芥的基因组ID。下载地址 这里可以选select也可以选没有完整的。我这里选了完整的。下完了之后就可以导入到R里面进行操作了。 12345678910111213141516# 因为我们只想转Araport对应的基因ID，所以只要选择Araport那里就行uniport_map &lt;- read.table("~/reference/annoation/Athaliana/uniport/ARATH_3702_idmapping.dat", header = F, fill = T, stringsAsFactors = F)uniport_map &lt;- subset(uniport_map,V2 == "Araport")# 出来的格式就是&gt; head(uniport_map) V1 V2 V350 P48347 Araport AT1G22300106 Q9S9Z8 Araport AT1G34760149 Q9C5W6 Araport AT1G26480205 P42643 Araport AT4G09000256 Q01525 Araport AT1G78300324 P42644 Araport AT5G38480 这样我们就可以根据蛋白ID批量提取拟南芥基因ID了。]]></content>
+      <categories>
+        <category>生信操作</category>
+      </categories>
+      <tags>
+        <tag>Bioinformatics</tag>
+        <tag>database</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[ebi的生信培训课程]]></title>
     <url>%2F2019%2F12%2F21%2Febi%E7%9A%84%E7%94%9F%E4%BF%A1%E5%9F%B9%E8%AE%AD%E8%AF%BE%E7%A8%8B%2F</url>
     <content type="text"><![CDATA[最近逛twiiter的时候，偶然发现有位老姐分享了关于植物的生信培训课程。 点进去地址的时候，发现是这个样子的。可以看到EBI还有很多网上培训课程。 还分了不同的种类、针对人群、时常 随便点进去一个。很多都是视频课程，不过其用的是youtube的播放器，还是得做一些骚操作的。 还有对应的PPT资料（比市面上的培训班好多了╰(￣▽￣)╭） 然后我还发现了PPT的合集地址，大家可以先看下PPT，然后感兴趣的去看对应的视频。 地址 直接用 1wget -c -r ftp://ftp.ebi.ac.uk/pub/training/2017/ 我这里是不知道培训资料有多大，生怕把电脑储存搞爆，所以按年份下下试试。大家储存大的，可以直接 12&gt; wget -c -r ftp://ftp.ebi.ac.uk/pub/training/&gt;]]></content>
