@@ -444,7 +444,7 @@ ln(\frac{P_{M}}{1-P_{M}})=-23.677816+0.362687*X_1+0.010342*X_2+59.471304*X_3+76.
 </ul></li>
 </ul>
 <p>通过上面的讲述，我们就发现了B是reference level，即是0。而M是对立的那个level，即是1。而我们logistic输出的是y=1的概率，即y=恶性肿瘤的概率。然后也刚好对应的我们前面的</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把&gt;0.5的定义为M，即恶性。把&lt;0.5定义为B，即良性</span></span><br><span class="line">diagnosis_pred<span class="variable">$pred_result</span> &lt;- ifelse(data_test<span class="variable">$pred</span> &gt; 0.5, <span class="string">"M"</span>,<span class="string">"B"</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 把&gt;0.5的定义为M，即恶性。把&lt;0.5定义为B，即良性</span></span><br><span class="line">diagnosis_pred$pred_result &lt;- ifelse(data_test$pred &gt; <span class="number">0.5</span>, <span class="string">"M"</span>,<span class="string">"B"</span>)</span><br></pre></td></tr></table></figure>
 <p>只有y=M的概率足够大，才定义为M。这里我们设定的<strong>足够大</strong>是0.5。你也可以认为大于0.9才算出是M，这样结果就会不太一样。</p>
 <blockquote>
 <p>关于ifelse，可以去看下《R语言实战》第二版的p435，这里不再讲述。</p>
@@ -561,7 +561,7 @@ ln(\frac{P_{M}}{1-P_{M}})=-23.677816+0.362687*X_1+0.010342*X_2+59.471304*X_3+76.
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -617,7 +617,11 @@ ln(\frac{P_{M}}{1-P_{M}})=-23.677816+0.362687*X_1+0.010342*X_2+59.471304*X_3+76.
         
           
         
-        <span class="site-state-item-count">6</span>
+          
+        
+          
+        
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
