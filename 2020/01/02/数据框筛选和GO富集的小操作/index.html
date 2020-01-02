@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="最近我得到了一个数据框，里面有几列，然后我要在这几列里面根据一些过滤条件得到基因，然后进行GO分析。比如下面这个数据框">
+<meta name="keywords" content="Bioinformatics,R,R_operation,Gene Ontology">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据框筛选和GO富集的小操作">
+<meta property="og:url" content="http://yoursite.com/2020/01/02/数据框筛选和GO富集的小操作/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="最近我得到了一个数据框，里面有几列，然后我要在这几列里面根据一些过滤条件得到基因，然后进行GO分析。比如下面这个数据框">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-02T12:10:32.052Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据框筛选和GO富集的小操作">
+<meta name="twitter:description" content="最近我得到了一个数据框，里面有几列，然后我要在这几列里面根据一些过滤条件得到基因，然后进行GO分析。比如下面这个数据框">
+  <link rel="canonical" href="http://yoursite.com/2020/01/02/数据框筛选和GO富集的小操作/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>数据框筛选和GO富集的小操作 | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/02/数据框筛选和GO富集的小操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Just For Daisy">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">数据框筛选和GO富集的小操作
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-02 20:08:33 / 修改时间：20:10:32" itemprop="dateCreated datePublished" datetime="2020-01-02T20:08:33+08:00">2020-01-02</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生信操作/" itemprop="url" rel="index"><span itemprop="name">生信操作</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近我得到了一个数据框，里面有几列，然后我要在这几列里面根据一些过滤条件得到基因，然后进行GO分析。比如下面这个数据框</p>
+<a id="more"></a>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gene是我随机抽取的基因</span></span><br><span class="line"><span class="keyword">library</span>(tidyverse)</span><br><span class="line"><span class="keyword">library</span>(clusterProfiler)</span><br><span class="line"><span class="keyword">library</span>(org.At.tair.db)</span><br><span class="line"></span><br><span class="line">data.frame(gene = sample(gene,<span class="number">10</span>),</span><br><span class="line">           rho = sample(seq(-<span class="number">1</span>,<span class="number">1</span>,length.out = <span class="number">1000</span>),<span class="number">10</span>),</span><br><span class="line">           log2Fold = sample(seq(-<span class="number">10</span>,<span class="number">10</span>,length.out = <span class="number">100</span>),<span class="number">10</span>),</span><br><span class="line">           stringsAsFactors = <span class="literal">F</span>) -&gt; test_data</span><br><span class="line"></span><br><span class="line">&gt; test_data</span><br><span class="line">        gene         rho    log2Fold</span><br><span class="line"><span class="number">1</span>  AT5G01640 -<span class="number">0.96996997</span>   <span class="number">3.3333333</span></span><br><span class="line"><span class="number">2</span>        CH5 -<span class="number">0.67367367</span>   <span class="number">1.5151515</span></span><br><span class="line"><span class="number">3</span>  AT5G07470 -<span class="number">0.99399399</span> -<span class="number">10.0000000</span></span><br><span class="line"><span class="number">4</span>  AT5G19140 -<span class="number">0.29129129</span>  -<span class="number">0.1010101</span></span><br><span class="line"><span class="number">5</span>      EMB79  <span class="number">0.02902903</span>  -<span class="number">1.5151515</span></span><br><span class="line"><span class="number">6</span>  AT5G54070 -<span class="number">0.65565566</span>  -<span class="number">4.1414141</span></span><br><span class="line"><span class="number">7</span>  AT5G46315 -<span class="number">0.77177177</span>  -<span class="number">5.7575758</span></span><br><span class="line"><span class="number">8</span>  AT3G55040  <span class="number">0.01701702</span>  -<span class="number">8.1818182</span></span><br><span class="line"><span class="number">9</span>  AT1G56410  <span class="number">0.43743744</span>   <span class="number">3.7373737</span></span><br><span class="line"><span class="number">10</span> AT3G05360 -<span class="number">0.74774775</span>  -<span class="number">9.7979798</span></span><br></pre></td></tr></table></figure>
+<p>比如我想得到分别得到rho &gt; 0和 &lt; 0的基因，那么我就会用</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 取出来基因</span></span><br><span class="line">test_data %&gt;% </span><br><span class="line">  filter(rho &gt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  pull(gene) %&gt;% </span><br><span class="line">  unique() -&gt; gene_rho_1</span><br><span class="line"></span><br><span class="line">test_data %&gt;% </span><br><span class="line">  filter(rho &lt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  pull(gene) %&gt;% </span><br><span class="line">  unique() -&gt; gene_rho_2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 做GO</span></span><br><span class="line">ego_1 &lt;- enrichGO(gene = gene_rho_1,</span><br><span class="line">                OrgDb = org.At.tair.db,</span><br><span class="line">                keyType = <span class="string">"TAIR"</span>,</span><br><span class="line">                ont = <span class="string">"BP"</span>)</span><br><span class="line"></span><br><span class="line">ego_2 &lt;- enrichGO(gene = gene_rho_2,</span><br><span class="line">                OrgDb = org.At.tair.db,</span><br><span class="line">                keyType = <span class="string">"TAIR"</span>,</span><br><span class="line">                ont = <span class="string">"BP"</span>)</span><br></pre></td></tr></table></figure>
+<p>但实际上Y叔的clusterProfiler包里面是有一个叫做<code>compareCluster</code>的函数，有了这个函数，我们就可以对 rho &gt;0 和 rho &lt;0一下子都做GO了。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># compareCluster要求传入的是一个列表</span></span><br><span class="line"><span class="comment"># 所以我们这里做一个列表</span></span><br><span class="line"></span><br><span class="line">gene_rho[[<span class="string">"p"</span>]] &lt;- test_data %&gt;% </span><br><span class="line">  filter(rho &gt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  pull(gene) %&gt;% </span><br><span class="line">  unique()</span><br><span class="line">gene_rho[[<span class="string">"n"</span>]] &lt;- test_data %&gt;% </span><br><span class="line">  filter(rho &lt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  pull(gene) %&gt;% </span><br><span class="line">  unique()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 然后传入compareCluster</span></span><br><span class="line">compareCluster(geneClusters = gene_rho,</span><br><span class="line">                      fun = <span class="string">"enrichGO"</span>,</span><br><span class="line">                      OrgDb = org.At.tair.db,</span><br><span class="line">                      keyType = <span class="string">"TAIR"</span>,</span><br><span class="line">                      ont = <span class="string">"BP"</span>) -&gt; ego</span><br></pre></td></tr></table></figure>
+<p>但实际上，我不仅是想对rho进行筛选，我还想对log2Fold进行筛选。那我就需要4次filter，才能构造出能够传入compareCluster的列表了。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这样做四次筛选</span></span><br><span class="line">gene_rho[[<span class="string">"p_p"</span>]] &lt;- test_data %&gt;% </span><br><span class="line">  filter(rho &gt; <span class="number">0</span> &amp; log2Fold &gt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  pull(gene) %&gt;% </span><br><span class="line">  unique()</span><br></pre></td></tr></table></figure>
+<p>本来想构造一个函数，但这种筛选条件比较复杂，不知道怎么给filter传入参数（大家知道的也可以在下面留言）。然后我就突然想到了一个方法</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加两列，作为我们后续group的条件</span></span><br><span class="line">test_data %&gt;% </span><br><span class="line">  mutate(r = rho &gt; <span class="number">0</span>,</span><br><span class="line">         l = log2Fold &gt; <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">        gene         rho    log2Fold     r     l</span><br><span class="line"><span class="number">1</span>  AT5G01640 -<span class="number">0.96996997</span>   <span class="number">3.3333333</span> <span class="literal">FALSE</span>  <span class="literal">TRUE</span></span><br><span class="line"><span class="number">2</span>        CH5 -<span class="number">0.67367367</span>   <span class="number">1.5151515</span> <span class="literal">FALSE</span>  <span class="literal">TRUE</span></span><br><span class="line"><span class="number">3</span>  AT5G07470 -<span class="number">0.99399399</span> -<span class="number">10.0000000</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">4</span>  AT5G19140 -<span class="number">0.29129129</span>  -<span class="number">0.1010101</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">5</span>      EMB79  <span class="number">0.02902903</span>  -<span class="number">1.5151515</span>  <span class="literal">TRUE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">6</span>  AT5G54070 -<span class="number">0.65565566</span>  -<span class="number">4.1414141</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">7</span>  AT5G46315 -<span class="number">0.77177177</span>  -<span class="number">5.7575758</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">8</span>  AT3G55040  <span class="number">0.01701702</span>  -<span class="number">8.1818182</span>  <span class="literal">TRUE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">9</span>  AT1G56410  <span class="number">0.43743744</span>   <span class="number">3.7373737</span>  <span class="literal">TRUE</span>  <span class="literal">TRUE</span></span><br><span class="line"><span class="number">10</span> AT3G05360 -<span class="number">0.74774775</span>  -<span class="number">9.7979798</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样我们的数据就顺利地分成了4组</span></span><br><span class="line">test_data %&gt;% </span><br><span class="line">  mutate(r = rho &gt; <span class="number">0</span>,</span><br><span class="line">         l = log2Fold &gt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  group_by(r,l)</span><br><span class="line"></span><br><span class="line"><span class="comment"># A tibble: 10 x 5</span></span><br><span class="line"><span class="comment"># Groups:   r, l [4]</span></span><br><span class="line">   gene          rho log2Fold r     l    </span><br><span class="line">   &lt;fct&gt;       &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt; &lt;lgl&gt;</span><br><span class="line"> <span class="number">1</span> AT5G01640 -<span class="number">0.970</span>     <span class="number">3.33</span>  <span class="literal">FALSE</span> <span class="literal">TRUE</span> </span><br><span class="line"> <span class="number">2</span> CH5       -<span class="number">0.674</span>     <span class="number">1.52</span>  <span class="literal">FALSE</span> <span class="literal">TRUE</span> </span><br><span class="line"> <span class="number">3</span> AT5G07470 -<span class="number">0.994</span>   -<span class="number">10</span>     <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"> <span class="number">4</span> AT5G19140 -<span class="number">0.291</span>    -<span class="number">0.101</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"> <span class="number">5</span> EMB79      <span class="number">0.0290</span>   -<span class="number">1.52</span>  <span class="literal">TRUE</span>  <span class="literal">FALSE</span></span><br><span class="line"> <span class="number">6</span> AT5G54070 -<span class="number">0.656</span>    -<span class="number">4.14</span>  <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"> <span class="number">7</span> AT5G46315 -<span class="number">0.772</span>    -<span class="number">5.76</span>  <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"> <span class="number">8</span> AT3G55040  <span class="number">0.0170</span>   -<span class="number">8.18</span>  <span class="literal">TRUE</span>  <span class="literal">FALSE</span></span><br><span class="line"> <span class="number">9</span> AT1G56410  <span class="number">0.437</span>     <span class="number">3.74</span>  <span class="literal">TRUE</span>  <span class="literal">TRUE</span> </span><br><span class="line"><span class="number">10</span> AT3G05360 -<span class="number">0.748</span>    -<span class="number">9.80</span>  <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br></pre></td></tr></table></figure>
+<p>在分成了4组之后，考虑到<code>compareCluster</code>需要传入的是list，所以我们就需要把group结果直接切割成含有4组的list。这时候就要用到group_split了</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">test_data %&gt;% </span><br><span class="line">  mutate(r = rho &gt; <span class="number">0</span>,</span><br><span class="line">         l = log2Fold &gt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  group_split(r,l)</span><br><span class="line"></span><br><span class="line">[[<span class="number">1</span>]]</span><br><span class="line"><span class="comment"># A tibble: 5 x 5</span></span><br><span class="line">  gene         rho log2Fold r     l    </span><br><span class="line">  &lt;fct&gt;      &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt; &lt;lgl&gt;</span><br><span class="line"><span class="number">1</span> AT5G07470 -<span class="number">0.994</span>  -<span class="number">10</span>     <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">2</span> AT5G19140 -<span class="number">0.291</span>   -<span class="number">0.101</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">3</span> AT5G54070 -<span class="number">0.656</span>   -<span class="number">4.14</span>  <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">4</span> AT5G46315 -<span class="number">0.772</span>   -<span class="number">5.76</span>  <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">5</span> AT3G05360 -<span class="number">0.748</span>   -<span class="number">9.80</span>  <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"></span><br><span class="line">[[<span class="number">2</span>]]</span><br><span class="line"><span class="comment"># A tibble: 2 x 5</span></span><br><span class="line">  gene         rho log2Fold r     l    </span><br><span class="line">  &lt;fct&gt;      &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt; &lt;lgl&gt;</span><br><span class="line"><span class="number">1</span> AT5G01640 -<span class="number">0.970</span>     <span class="number">3.33</span> <span class="literal">FALSE</span> <span class="literal">TRUE</span> </span><br><span class="line"><span class="number">2</span> CH5       -<span class="number">0.674</span>     <span class="number">1.52</span> <span class="literal">FALSE</span> <span class="literal">TRUE</span> </span><br><span class="line"></span><br><span class="line">[[<span class="number">3</span>]]</span><br><span class="line"><span class="comment"># A tibble: 2 x 5</span></span><br><span class="line">  gene         rho log2Fold r     l    </span><br><span class="line">  &lt;fct&gt;      &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt; &lt;lgl&gt;</span><br><span class="line"><span class="number">1</span> EMB79     <span class="number">0.0290</span>    -<span class="number">1.52</span> <span class="literal">TRUE</span>  <span class="literal">FALSE</span></span><br><span class="line"><span class="number">2</span> AT3G55040 <span class="number">0.0170</span>    -<span class="number">8.18</span> <span class="literal">TRUE</span>  <span class="literal">FALSE</span></span><br><span class="line"></span><br><span class="line">[[<span class="number">4</span>]]</span><br><span class="line"><span class="comment"># A tibble: 1 x 5</span></span><br><span class="line">  gene        rho log2Fold r     l    </span><br><span class="line">  &lt;fct&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;lgl&gt; &lt;lgl&gt;</span><br><span class="line"><span class="number">1</span> AT1G56410 <span class="number">0.437</span>     <span class="number">3.74</span> <span class="literal">TRUE</span>  <span class="literal">TRUE</span></span><br></pre></td></tr></table></figure>
+<p>每个列表的名字可以由group_keys来查看，然后你手动names一下，更改下列表元素的名字就行了。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以看到分别是</span></span><br><span class="line">&gt; test_data %&gt;% </span><br><span class="line">+   mutate(r = rho &gt; <span class="number">0</span>,</span><br><span class="line">+          l = log2Fold &gt; <span class="number">0</span>) %&gt;% </span><br><span class="line">+   group_keys(r,l)</span><br><span class="line"><span class="comment"># A tibble: 4 x 2</span></span><br><span class="line">  r     l    </span><br><span class="line">  &lt;lgl&gt; &lt;lgl&gt;</span><br><span class="line"><span class="number">1</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"><span class="number">2</span> <span class="literal">FALSE</span> <span class="literal">TRUE</span> </span><br><span class="line"><span class="number">3</span> <span class="literal">TRUE</span>  <span class="literal">FALSE</span></span><br><span class="line"><span class="number">4</span> <span class="literal">TRUE</span>  <span class="literal">TRUE</span></span><br></pre></td></tr></table></figure>
+<p>但还有个问题就是我们得到了列表内元素还是tibble，并不是我们想要的基因，所以我们还要进行一步操作lappy的操作</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这样我们得到的就是一个含有4组元素，且元素里面都是基因的列表了</span></span><br><span class="line"><span class="comment"># 然后就可以传入compareCluster批量做GO了。</span></span><br><span class="line">test_data %&gt;% </span><br><span class="line">  mutate(r = rho &gt; <span class="number">0</span>,</span><br><span class="line">         l = log2Fold &gt; <span class="number">0</span>) %&gt;% </span><br><span class="line">  group_split(r,l) %&gt;% </span><br><span class="line">  lapply(.,<span class="keyword">function</span>(x) unique(pull(x,gene)))</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Bioinformatics/" rel="tag"># Bioinformatics</a>
+            
+              <a href="/tags/R/" rel="tag"># R</a>
+            
+              <a href="/tags/R-operation/" rel="tag"># R_operation</a>
+            
+              <a href="/tags/Gene-Ontology/" rel="tag"># Gene Ontology</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/12/30/R-studio的注释/" rel="next" title="R studio的注释">
+                  <i class="fa fa-chevron-left"></i> R studio的注释
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Just For Daisy</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Just For Daisy</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>
