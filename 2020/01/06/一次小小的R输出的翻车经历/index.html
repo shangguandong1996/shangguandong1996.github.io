@@ -53,15 +53,19 @@
   };
 </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="tags">
-<meta property="og:url" content="http://yoursite.com/tags/index.html">
+  <meta name="description" content="之前发现了具名向量在用 write.csv 输出的时候，列名刚好会是向量的名字，所以一直用 write.csv 来输出结果。但今天突然发现我输出的那个向量的行名消失了，但如果我随机抽取了其中一部分向量输出，行名仍旧在。所以我做了一个测试，发现了一个奇怪的现象，R在小数据输出的时候，会保留行名，而在大数据输出的时候，行名则不会保留，怀疑会不会是R的内存管理机制。">
+<meta name="keywords" content="R,R_operation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次小小的R输出的翻车经历">
+<meta property="og:url" content="http://yoursite.com/2020/01/06/一次小小的R输出的翻车经历/index.html">
 <meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="之前发现了具名向量在用 write.csv 输出的时候，列名刚好会是向量的名字，所以一直用 write.csv 来输出结果。但今天突然发现我输出的那个向量的行名消失了，但如果我随机抽取了其中一部分向量输出，行名仍旧在。所以我做了一个测试，发现了一个奇怪的现象，R在小数据输出的时候，会保留行名，而在大数据输出的时候，行名则不会保留，怀疑会不会是R的内存管理机制。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-30T09:21:07.693Z">
+<meta property="og:updated_time" content="2020-01-06T11:57:54.664Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tags">
-  <link rel="canonical" href="http://yoursite.com/tags/">
+<meta name="twitter:title" content="一次小小的R输出的翻车经历">
+<meta name="twitter:description" content="之前发现了具名向量在用 write.csv 输出的时候，列名刚好会是向量的名字，所以一直用 write.csv 来输出结果。但今天突然发现我输出的那个向量的行名消失了，但如果我随机抽取了其中一部分向量输出，行名仍旧在。所以我做了一个测试，发现了一个奇怪的现象，R在小数据输出的时候，会保留行名，而在大数据输出的时候，行名则不会保留，怀疑会不会是R的内存管理机制。">
+  <link rel="canonical" href="http://yoursite.com/2020/01/06/一次小小的R输出的翻车经历/">
 
 
 <script id="page-configurations">
@@ -69,13 +73,13 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false,
-    isPage: true,
+    isPost: true,
+    isPage: false,
     isArchive: false
   };
 </script>
 
-  <title>tags | Shawn's Blog</title>
+  <title>一次小小的R输出的翻车经历 | Shawn's Blog</title>
   <meta name="generator" content="Hexo 3.9.0">
   
 
@@ -208,27 +212,6 @@
 
     
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
 </nav>
   <div class="site-search">
     <div class="popup search-popup">
@@ -268,91 +251,127 @@
             
 
   <div id="posts" class="posts-expand">
-    
-    
-    
-    <div class="post-block page">
-      <header class="post-header">
-
-<h1 class="post-title" itemprop="name headline">tags
-
-</h1>
-
-<div class="post-meta">
+      <article itemscope itemtype="http://schema.org/Article">
   
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/06/一次小小的R输出的翻车经历/">
 
-</div>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Just For Daisy">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
 
-</header>
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">一次小小的R输出的翻车经历
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-06 19:54:32 / 修改时间：19:57:54" itemprop="dateCreated datePublished" datetime="2020-01-06T19:54:32+08:00">2020-01-06</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Coding/" itemprop="url" rel="index"><span itemprop="name">Coding</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-      
-      <div class="post-body">
+        <p>之前发现了具名向量在用 <code>write.csv</code> 输出的时候，列名刚好会是向量的名字，所以一直用 <code>write.csv</code> 来输出结果。但今天突然发现我输出的那个向量的行名消失了，但如果我随机抽取了其中一部分向量输出，行名仍旧在。所以我做了一个测试，发现了一个奇怪的现象，R在小数据输出的时候，会保留行名，而在大数据输出的时候，行名则不会保留，怀疑会不会是R的内存管理机制。</p>
+<a id="more"></a>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&gt; a &lt;- <span class="number">1</span>:<span class="number">10</span></span><br><span class="line">&gt; names(a) &lt;- stringi::stri_rand_strings(<span class="number">10</span>,length = <span class="number">5</span>)</span><br><span class="line">&gt; write.csv(a,<span class="string">"a.csv"</span>)</span><br><span class="line">&gt; read.csv(<span class="string">"a.csv"</span>)[<span class="number">1</span>:<span class="number">5</span>,]</span><br><span class="line">      X x</span><br><span class="line"><span class="number">1</span> 3dggA <span class="number">1</span></span><br><span class="line"><span class="number">2</span> gVyHC <span class="number">2</span></span><br><span class="line"><span class="number">3</span> 2EBPT <span class="number">3</span></span><br><span class="line"><span class="number">4</span> 5dCJT <span class="number">4</span></span><br><span class="line"><span class="number">5</span> laCOU <span class="number">5</span></span><br><span class="line">&gt; b &lt;- <span class="number">1</span>:<span class="number">10E5</span></span><br><span class="line">&gt; names(b) &lt;- stringi::stri_rand_strings(<span class="number">10E5</span>,length = <span class="number">5</span>)</span><br><span class="line">&gt; write.csv(b,<span class="string">"b.csv"</span>)</span><br><span class="line">&gt; read.csv(<span class="string">"b.csv"</span>)[<span class="number">1</span>:<span class="number">5</span>,]</span><br><span class="line">  X x</span><br><span class="line"><span class="number">1</span> <span class="number">1</span> <span class="number">1</span></span><br><span class="line"><span class="number">2</span> <span class="number">2</span> <span class="number">2</span></span><br><span class="line"><span class="number">3</span> <span class="number">3</span> <span class="number">3</span></span><br><span class="line"><span class="number">4</span> <span class="number">4</span> <span class="number">4</span></span><br><span class="line"><span class="number">5</span> <span class="number">5</span> <span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>然后在twitter上Po出了这个问题，后来一个老哥提醒了我，可能并不是R对于大小数据敏感，而只是我的测试数据单纯有重复名字。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; length(unique(stringi::stri_rand_strings(<span class="number">10E5</span>,length = <span class="number">5</span>)))</span><br><span class="line">[<span class="number">1</span>] <span class="number">999440</span></span><br></pre></td></tr></table></figure>
+<p>在我换了测试数据之后，果然这个 “bug” 消失了。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; b &lt;- <span class="number">1</span>:<span class="number">10E5</span></span><br><span class="line">&gt; names(b) &lt;- paste0(<span class="string">"str"</span>,<span class="number">1</span>:<span class="number">10E5</span>)</span><br><span class="line">&gt; write.csv(b,<span class="string">"b.csv"</span>)</span><br><span class="line">&gt; read.csv(<span class="string">"b.csv"</span>)[<span class="number">1</span>:<span class="number">5</span>,]</span><br><span class="line">     X x</span><br><span class="line"><span class="number">1</span> str1 <span class="number">1</span></span><br><span class="line"><span class="number">2</span> str2 <span class="number">2</span></span><br><span class="line"><span class="number">3</span> str3 <span class="number">3</span></span><br><span class="line"><span class="number">4</span> str4 <span class="number">4</span></span><br><span class="line"><span class="number">5</span> str5 <span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>所以最后感觉是R不支持有行名相同导致的情况……</p>
+
+    </div>
+
+    
+    
+    
         
-          <div class="tag-cloud">
-            <div class="tag-cloud-title">
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/R/" rel="tag"># R</a>
+            
+              <a href="/tags/R-operation/" rel="tag"># R_operation</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
               
+                <a href="/2020/01/02/数据框筛选和GO富集的小操作/" rel="next" title="数据框筛选和GO富集的小操作">
+                  <i class="fa fa-chevron-left"></i> 数据框筛选和GO富集的小操作
+                </a>
               
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-              目前共计 10 个标签
             </div>
-            <div class="tag-cloud-tags">
-              
-                <a href="/tags/Bioinformatics/" style="font-size: 21px; color: #6f6f6f">Bioinformatics</a> <a href="/tags/Gene-Ontology/" style="font-size: 12px; color: #ccc">Gene Ontology</a> <a href="/tags/R/" style="font-size: 30px; color: #111">R</a> <a href="/tags/R-operation/" style="font-size: 16.5px; color: #9d9d9d">R_operation</a> <a href="/tags/Range-operation/" style="font-size: 12px; color: #ccc">Range_operation</a> <a href="/tags/Sequence-operation/" style="font-size: 16.5px; color: #9d9d9d">Sequence_operation</a> <a href="/tags/Shell/" style="font-size: 16.5px; color: #9d9d9d">Shell</a> <a href="/tags/Statistics/" style="font-size: 25.5px; color: #404040">Statistics</a> <a href="/tags/course/" style="font-size: 12px; color: #ccc">course</a> <a href="/tags/database/" style="font-size: 12px; color: #ccc">database</a>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
               
             </div>
           </div>
         
-      </div>
-      
-      
-      
-    </div>
+      </footer>
     
+  </div>
+  
+  
+  
+  </article>
 
-    
-    
-    
   </div>
 
 
