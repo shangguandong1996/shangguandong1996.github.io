@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Bioconductor的镜像修改]]></title>
+    <url>%2F2020%2F01%2F09%2FBioconductor%E7%9A%84%E9%95%9C%E5%83%8F%E4%BF%AE%E6%94%B9%2F</url>
+    <content type="text"><![CDATA[今天突然发现一直能用的BiocManager::install很慢，好像一直加载不出来。刚开始还以为是实验室的网不行了，但 install.package()的包却很快。所以我怀疑可能是Biocondutcor的镜像问题，问了师兄之后才知道如何设置Bioconductor的镜像。 12345678910111213# 输入下面这个命令，然后就会跳出来选项让你选。选6即可&gt; chooseBioCmirror()Secure BioC mirrors 1: 0-Bioconductor (World-wide) [https]2: Japan (Tachikawa) [https]3: Japan (Wako) [https]4: Australia (Sydney) [https]5: CRAN ASIA (Korea, Japan and Singapore) (Seoul) [https]6: China (Peking) [https]7: (other mirrors)Selection: 6 在改完镜像之后，果然体会到了飞一般的速度╮（╯＿╰）╭。 当然我们也可以在 ~/.Rprofile 里直接修改。 12345# 打开.Rprofilefile.edit('~/.Rprofile')# 这是清华源的镜像options(BioC_mirror="https://mirrors.tuna.tsinghua.edu.cn/bioconductor") 另外附上Bioconductor的其他镜像：镜像地址 参考 不用biocLite安装Bioconductor包 R包精讲第三篇：如何切换镜像？ R安装升级后的若干规定动作 师兄]]></content>
+      <categories>
+        <category>生信操作</category>
+      </categories>
+      <tags>
+        <tag>Bioinformatics</tag>
+        <tag>R</tag>
+        <tag>Biocondutcor</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[NAR数据库的更新与收集]]></title>
     <url>%2F2020%2F01%2F09%2FNAR%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%9B%B4%E6%96%B0%E4%B8%8E%E6%94%B6%E9%9B%86%2F</url>
     <content type="text"><![CDATA[NAR最近更新了他们新一年的数据库整合：地址 同时我还发现了他们的数据库整合的地址 大家可以去看看，毕竟能发在NAR上的数据库，质量还是有一定保证的。]]></content>
@@ -34,8 +47,8 @@
         <category>Coding</category>
       </categories>
       <tags>
-        <tag>R_operation</tag>
         <tag>R</tag>
+        <tag>R_operation</tag>
       </tags>
   </entry>
   <entry>
@@ -47,8 +60,8 @@
       </categories>
       <tags>
         <tag>Bioinformatics</tag>
-        <tag>R_operation</tag>
         <tag>R</tag>
+        <tag>R_operation</tag>
         <tag>Gene Ontology</tag>
       </tags>
   </entry>
@@ -94,7 +107,7 @@
     <url>%2F2019%2F12%2F21%2Febi%E7%9A%84%E7%94%9F%E4%BF%A1%E5%9F%B9%E8%AE%AD%E8%AF%BE%E7%A8%8B%2F</url>
     <content type="text"><![CDATA[最近逛twiiter的时候，偶然发现有位老姐分享了关于植物的生信培训课程。 点进去地址的时候，发现是这个样子的。可以看到EBI还有很多网上培训课程。 还分了不同的种类、针对人群、时常 随便点进去一个。很多都是视频课程，不过其用的是youtube的播放器，还是得做一些骚操作的。 还有对应的PPT资料（比市面上的培训班好多了╰(￣▽￣)╭） 然后我还发现了PPT的合集地址，大家可以先看下PPT，然后感兴趣的去看对应的视频。 地址 直接用 1wget -c -r ftp://ftp.ebi.ac.uk/pub/training/2017/ 我这里是不知道培训资料有多大，生怕把电脑储存搞爆，所以按年份下下试试。大家储存大的，可以直接 12&gt; wget -c -r ftp://ftp.ebi.ac.uk/pub/training/&gt;]]></content>
       <categories>
-        <category>生信操作</category>
+        <category>数据库与课程</category>
       </categories>
       <tags>
         <tag>Bioinformatics</tag>
