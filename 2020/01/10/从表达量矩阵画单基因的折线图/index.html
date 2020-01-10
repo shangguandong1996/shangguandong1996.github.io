@@ -63,7 +63,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://shangguandong-1253397819.cos.ap-shanghai.myqcloud.com/picgo/expression_matrix_lineplot_1.png">
 <meta property="og:image" content="https://shangguandong-1253397819.cos.ap-shanghai.myqcloud.com/picgo/expression_matrix_lineplot_1.png">
-<meta property="og:updated_time" content="2020-01-10T02:46:21.852Z">
+<meta property="og:updated_time" content="2020-01-10T02:52:28.900Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从表达量矩阵画单基因的折线图">
 <meta name="twitter:description" content="我们有时候会有一个需求，就是从我们表达量矩阵里面挑一个单基因，来展现该基因在两种或者多种不同处理下的时序性表达。就像下面的图那样。">
@@ -287,7 +287,7 @@
                 
               
 
-              <time title="创建时间：2020-01-10 10:44:10 / 修改时间：10:46:21" itemprop="dateCreated datePublished" datetime="2020-01-10T10:44:10+08:00">2020-01-10</time>
+              <time title="创建时间：2020-01-10 10:44:10 / 修改时间：10:52:28" itemprop="dateCreated datePublished" datetime="2020-01-10T10:44:10+08:00">2020-01-10</time>
             </span>
           
             
@@ -344,6 +344,9 @@
 <figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">interest_gene_plot_list &lt;- list()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> interest_gene)&#123;</span><br><span class="line">  i_gene_data &lt;- data[data$geneID %<span class="keyword">in</span>% i,]</span><br><span class="line">  </span><br><span class="line">  ggplot(data = plot_data, aes(x = time, y = count,</span><br><span class="line">                             group = tissue)) +</span><br><span class="line">    geom_line(aes(color = tissue),linetype = <span class="number">2</span>) +</span><br><span class="line">    geom_point(aes(fill = tissue),shape = <span class="number">21</span>,size = <span class="number">5</span>) +</span><br><span class="line">    theme_bw() +</span><br><span class="line">    ggtitle(label = i) -&gt; p</span><br><span class="line">  </span><br><span class="line">  interest_gene_plot_list[[i]] &lt;- p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pdf(XXX)</span><br><span class="line">interest_gene_plot_list</span><br><span class="line">dev.off()</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>这个批量画图是我临时造的，没搞测试数据……大家看看思路就行，反正很简单，就是for循环下，然后把图放list里面保存……</p>
+</blockquote>
+<blockquote>
+<p>expression_matrix_lineplot</p>
 </blockquote>
 
     </div>
