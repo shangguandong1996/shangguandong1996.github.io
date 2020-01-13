@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico?v=7.3.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="上一篇文章我提到了从表达量矩阵画时序性（或者多处理）的单基因的折线图，实际上我们的表达量矩阵里面每个处理是有2-3个重复的。所以用来画折线图的矩阵应该是合并了重复，求得平均值以后的表达量矩阵。这一部分我们来尝试从最原始的表达量矩阵合并重复、求平均值。">
+<meta name="keywords" content="Bioinformatics,R,apply family">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从表达量矩阵求各处理组的平均值">
+<meta property="og:url" content="http://yoursite.com/2020/01/13/从表达量矩阵求各处理组的平均值/index.html">
+<meta property="og:site_name" content="Shawn&#39;s Blog">
+<meta property="og:description" content="上一篇文章我提到了从表达量矩阵画时序性（或者多处理）的单基因的折线图，实际上我们的表达量矩阵里面每个处理是有2-3个重复的。所以用来画折线图的矩阵应该是合并了重复，求得平均值以后的表达量矩阵。这一部分我们来尝试从最原始的表达量矩阵合并重复、求平均值。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-13T07:40:28.157Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从表达量矩阵求各处理组的平均值">
+<meta name="twitter:description" content="上一篇文章我提到了从表达量矩阵画时序性（或者多处理）的单基因的折线图，实际上我们的表达量矩阵里面每个处理是有2-3个重复的。所以用来画折线图的矩阵应该是合并了重复，求得平均值以后的表达量矩阵。这一部分我们来尝试从最原始的表达量矩阵合并重复、求平均值。">
+  <link rel="canonical" href="http://yoursite.com/2020/01/13/从表达量矩阵求各处理组的平均值/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>从表达量矩阵求各处理组的平均值 | Shawn's Blog</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a href="https://github.com/shangguandong1996" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Shawn's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/13/从表达量矩阵求各处理组的平均值/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Just For Daisy">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Shawn's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">从表达量矩阵求各处理组的平均值
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-13 15:38:00 / 修改时间：15:40:28" itemprop="dateCreated datePublished" datetime="2020-01-13T15:38:00+08:00">2020-01-13</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/生信操作/" itemprop="url" rel="index"><span itemprop="name">生信操作</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>上一篇文章我提到了从表达量矩阵画时序性（或者多处理）的单基因的折线图，实际上我们的表达量矩阵里面每个处理是有2-3个重复的。所以用来画折线图的矩阵应该是合并了重复，求得平均值以后的表达量矩阵。这一部分我们来尝试从最原始的表达量矩阵合并重复、求平均值。</p>
+<a id="more"></a>
+<p>首先我们来构建测试数据</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">set.seed(<span class="number">19960203</span>)</span><br><span class="line"><span class="keyword">library</span>(magrittr) <span class="comment"># 只是为了单纯调用%&gt;%这个管道操作而已</span></span><br><span class="line"></span><br><span class="line">expr_df &lt;- data.frame(Control_R1 = rnorm(<span class="number">5</span>,mean = <span class="number">10</span>),</span><br><span class="line">                      Control_R2 = rnorm(<span class="number">5</span>,mean = <span class="number">10</span>),</span><br><span class="line">                      Control_R3 = rnorm(<span class="number">5</span>,mean = <span class="number">10</span>),</span><br><span class="line">                      Treat_R1 = rnorm(<span class="number">5</span>,mean = <span class="number">20</span>),</span><br><span class="line">                      Treat_R2 = rnorm(<span class="number">5</span>,mean = <span class="number">20</span>),</span><br><span class="line">                      Other_R1 = rnorm(<span class="number">5</span>,mean = <span class="number">30</span>),</span><br><span class="line">                      Other_R2 = rnorm(<span class="number">5</span>,mean = <span class="number">30</span>),</span><br><span class="line">                      Other_R3 = rnorm(<span class="number">5</span>,mean = <span class="number">30</span>),</span><br><span class="line">                      Other_R4 = rnorm(<span class="number">5</span>,mean = <span class="number">30</span>))</span><br><span class="line">rownames(expr_df) &lt;- paste0(<span class="string">"Gene"</span>,<span class="number">1</span>:<span class="number">5</span>)</span><br><span class="line">expr_df</span><br><span class="line"></span><br><span class="line">&gt; expr_df</span><br><span class="line">      Control_R1 Control_R2 Control_R3 Treat_R1 Treat_R2 Other_R1 Other_R2 Other_R3 Other_R4</span><br><span class="line">Gene1  <span class="number">10.764324</span>   <span class="number">9.428356</span>  <span class="number">10.044180</span> <span class="number">20.54518</span> <span class="number">19.12997</span> <span class="number">29.55600</span> <span class="number">29.70370</span> <span class="number">31.64527</span> <span class="number">29.70927</span></span><br><span class="line">Gene2   <span class="number">9.342808</span>   <span class="number">9.345432</span>  <span class="number">10.048242</span> <span class="number">21.24643</span> <span class="number">19.99557</span> <span class="number">29.66273</span> <span class="number">31.06946</span> <span class="number">28.56245</span> <span class="number">30.76298</span></span><br><span class="line">Gene3   <span class="number">9.642546</span>   <span class="number">8.777341</span>  <span class="number">10.029212</span> <span class="number">18.77438</span> <span class="number">17.73295</span> <span class="number">29.96400</span> <span class="number">30.16638</span> <span class="number">29.81993</span> <span class="number">31.63248</span></span><br><span class="line">Gene4  <span class="number">10.743541</span>   <span class="number">8.764679</span>   <span class="number">9.297456</span> <span class="number">20.41032</span> <span class="number">20.62758</span> <span class="number">29.48314</span> <span class="number">30.68438</span> <span class="number">31.92357</span> <span class="number">28.57588</span></span><br><span class="line">Gene5  <span class="number">10.199939</span>   <span class="number">9.814605</span>   <span class="number">8.767410</span> <span class="number">20.91134</span> <span class="number">17.49593</span> <span class="number">28.59100</span> <span class="number">31.29823</span> <span class="number">30.26129</span> <span class="number">29.95323</span></span><br></pre></td></tr></table></figure>
+<p>这里我以5个基因，处理为Control（三个重复）、Treat（两个重复）、Other（四个重复）的表达量矩阵为例。</p>
+<h2 id="合并重复">合并重复</h2>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 得到对应的组织类型</span></span><br><span class="line">&gt; tissue &lt;- colnames(expr_df) %&gt;% gsub(<span class="string">"_R[0-9]"</span>,<span class="string">""</span>,.)</span><br><span class="line">&gt; tissue</span><br><span class="line">[<span class="number">1</span>] <span class="string">"Control"</span> <span class="string">"Control"</span> <span class="string">"Control"</span> <span class="string">"Treat"</span>   <span class="string">"Treat"</span>   <span class="string">"Other"</span>   <span class="string">"Other"</span>   <span class="string">"Other"</span>   <span class="string">"Other"</span>  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 我们这里有三种处理类型</span></span><br><span class="line">&gt; tissue_type &lt;- unique(tissue)</span><br><span class="line">&gt; tissue_type</span><br><span class="line">[<span class="number">1</span>] <span class="string">"Control"</span> <span class="string">"Treat"</span>   <span class="string">"Other"</span>  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 然后用sapply函数来合并重复</span></span><br><span class="line"><span class="comment"># 这里我用的是 -&gt; 来赋值，大家不要学我……这个有点不太正规</span></span><br><span class="line">sapply(tissue_type, <span class="keyword">function</span>(x)&#123;</span><br><span class="line">  rowSums(expr_df[,x == tissue])</span><br><span class="line">&#125;) -&gt; expr_df_merge</span><br></pre></td></tr></table></figure>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; expr_df_merge</span><br><span class="line">       Control    Treat    Other</span><br><span class="line">Gene1 <span class="number">30.23686</span> <span class="number">39.67515</span> <span class="number">120.6142</span></span><br><span class="line">Gene2 <span class="number">28.73648</span> <span class="number">41.24201</span> <span class="number">120.0576</span></span><br><span class="line">Gene3 <span class="number">28.44910</span> <span class="number">36.50733</span> <span class="number">121.5828</span></span><br><span class="line">Gene4 <span class="number">28.80568</span> <span class="number">41.03790</span> <span class="number">120.6670</span></span><br><span class="line">Gene5 <span class="number">28.78195</span> <span class="number">38.40728</span> <span class="number">120.1038</span></span><br></pre></td></tr></table></figure>
+<p>手动检查两个下对不对</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; rowSums(expr_df[<span class="number">1</span>,<span class="number">1</span>:<span class="number">3</span>])</span><br><span class="line">   Gene1 </span><br><span class="line"><span class="number">30.23686</span> </span><br><span class="line">&gt; rowSums(expr_df[<span class="number">3</span>,<span class="number">1</span>:<span class="number">3</span>])</span><br><span class="line">  Gene3 </span><br><span class="line"><span class="number">28.4491</span></span><br></pre></td></tr></table></figure>
+<p>这里我稍微解释下这个合并重复的操作，具体的以后可以单独写下sapply、lapply这种操作。sapply其实是一个简化版的lapply，其输出的是向量，所以可以看到我们的表达量矩阵再也不是数据框了，而是matrix类型了。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; class(expr_df)</span><br><span class="line">[<span class="number">1</span>] <span class="string">"data.frame"</span></span><br><span class="line">&gt; class(expr_df_merge)</span><br><span class="line">[<span class="number">1</span>] <span class="string">"matrix"</span></span><br></pre></td></tr></table></figure>
+<p>然后这里传入的是<code>Control、Treat、Other</code> 三种tissue_type，我们可以看下如果我们传入的是Control会怎么样。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 假设x等于Control</span></span><br><span class="line">&gt; x &lt;- <span class="string">"Control"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里就自动帮我们找到了Control所在的几个重复的位置，即前三个</span></span><br><span class="line">&gt; x == tissue</span><br><span class="line">[<span class="number">1</span>]  <span class="literal">TRUE</span>  <span class="literal">TRUE</span>  <span class="literal">TRUE</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span> <span class="literal">FALSE</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 从而提出了Conrol所在的几列</span></span><br><span class="line">&gt; expr_df[,x == tissue]</span><br><span class="line">      Control_R1 Control_R2 Control_R3</span><br><span class="line">Gene1  <span class="number">10.764324</span>   <span class="number">9.428356</span>  <span class="number">10.044180</span></span><br><span class="line">Gene2   <span class="number">9.342808</span>   <span class="number">9.345432</span>  <span class="number">10.048242</span></span><br><span class="line">Gene3   <span class="number">9.642546</span>   <span class="number">8.777341</span>  <span class="number">10.029212</span></span><br><span class="line">Gene4  <span class="number">10.743541</span>   <span class="number">8.764679</span>   <span class="number">9.297456</span></span><br><span class="line">Gene5  <span class="number">10.199939</span>   <span class="number">9.814605</span>   <span class="number">8.767410</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 然后用rowSums</span></span><br><span class="line"><span class="comment"># 这样就得到了Control的5个基因合并重复的表达量值了。</span></span><br><span class="line">&gt; rowSums(expr_df[,x == tissue])</span><br><span class="line">   Gene1    Gene2    Gene3    Gene4    Gene5 </span><br><span class="line"><span class="number">30.23686</span> <span class="number">28.73648</span> <span class="number">28.44910</span> <span class="number">28.80568</span> <span class="number">28.78195</span></span><br></pre></td></tr></table></figure>
+<h2 id="求平均值">求平均值</h2>
+<p>在合并完了重复之后，如果我们每个处理都是3个重复，那么其实我们不求平均值也行。但有时候事与愿违，可能某个处理下的某个重复由于质量不好，被我们剔除了，就变成了2个重复。所以为了应对这种情况，我把三个处理的重复数设置成3,2,4来举例子。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 首先我们需要得到各个处理重复的频数</span></span><br><span class="line"><span class="comment"># 用的是table函数</span></span><br><span class="line">&gt; tissue %&gt;% table()</span><br><span class="line">.</span><br><span class="line">Control   Other   Treat </span><br><span class="line">      <span class="number">3</span>       <span class="number">4</span>       <span class="number">2</span> </span><br><span class="line">&gt; tissue_freq &lt;- tissue %&gt;% table() %&gt;% as.numeric()</span><br><span class="line">&gt; tissue_freq</span><br><span class="line">[<span class="number">1</span>] <span class="number">3</span> <span class="number">4</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="方法一">方法一</h3>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; t(t(expr_df_merge) / tissue_freq)</span><br><span class="line">        Control     Treat    Other</span><br><span class="line">Gene1 <span class="number">10.078953</span>  <span class="number">9.918787</span> <span class="number">60.30712</span></span><br><span class="line">Gene2  <span class="number">9.578828</span> <span class="number">10.310502</span> <span class="number">60.02881</span></span><br><span class="line">Gene3  <span class="number">9.483033</span>  <span class="number">9.126831</span> <span class="number">60.79140</span></span><br><span class="line">Gene4  <span class="number">9.601892</span> <span class="number">10.259474</span> <span class="number">60.33349</span></span><br><span class="line">Gene5  <span class="number">9.593985</span>  <span class="number">9.601819</span> <span class="number">60.05188</span></span><br></pre></td></tr></table></figure>
+<p>我先来一步步地讲下方法一的原理，因为matrix其本质上还是（原子）向量，其只不过attribute里面多了dim这个属性，使得其变成了matrix这个特殊的数据结构。你可以想象成这里的matrix其实就是15个值，5个一叠，5个一叠，按Gene1……Gene5……Gene1……Gene5……Gene1……Gene5叠成了3列。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里还多了dimnames这个属性</span></span><br><span class="line">&gt; typeof(expr_df_merge)</span><br><span class="line">[<span class="number">1</span>] <span class="string">"double"</span></span><br><span class="line">&gt; attributes(expr_df_merge)</span><br><span class="line">$dim</span><br><span class="line">[<span class="number">1</span>] <span class="number">5</span> <span class="number">3</span></span><br><span class="line"></span><br><span class="line">$dimnames</span><br><span class="line">$dimnames[[<span class="number">1</span>]]</span><br><span class="line">[<span class="number">1</span>] <span class="string">"Gene1"</span> <span class="string">"Gene2"</span> <span class="string">"Gene3"</span> <span class="string">"Gene4"</span> <span class="string">"Gene5"</span></span><br><span class="line"></span><br><span class="line">$dimnames[[<span class="number">2</span>]]</span><br><span class="line">[<span class="number">1</span>] <span class="string">"Control"</span> <span class="string">"Treat"</span>   <span class="string">"Other"</span>  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 双精度类型</span></span><br><span class="line">&gt; typeof(expr_df_merge)</span><br><span class="line">[<span class="number">1</span>] <span class="string">"double"</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>关于原子向量、matrix这种Advanced_R这本书讲的很好，以后有机会也可以给大家讲讲。</p>
+</blockquote>
+<p>然后R对于向量化的操作还具有短向量自动循环补全长向量的骚操作。比如</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="number">1</span>:<span class="number">10</span></span><br><span class="line"> [<span class="number">1</span>]  <span class="number">1</span>  <span class="number">2</span>  <span class="number">3</span>  <span class="number">4</span>  <span class="number">5</span>  <span class="number">6</span>  <span class="number">7</span>  <span class="number">8</span>  <span class="number">9</span> <span class="number">10</span></span><br><span class="line">&gt; <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">[<span class="number">1</span>] <span class="number">1</span> <span class="number">2</span></span><br><span class="line">&gt; <span class="number">1</span>:<span class="number">10</span> - <span class="number">1</span>:<span class="number">2</span></span><br><span class="line"> [<span class="number">1</span>] <span class="number">0</span> <span class="number">0</span> <span class="number">2</span> <span class="number">2</span> <span class="number">4</span> <span class="number">4</span> <span class="number">6</span> <span class="number">6</span> <span class="number">8</span> <span class="number">8</span></span><br><span class="line">&gt; <span class="number">1</span>:<span class="number">10</span> / <span class="number">1</span>:<span class="number">2</span></span><br><span class="line"> [<span class="number">1</span>] <span class="number">1</span> <span class="number">1</span> <span class="number">3</span> <span class="number">2</span> <span class="number">5</span> <span class="number">3</span> <span class="number">7</span> <span class="number">4</span> <span class="number">9</span> <span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p>这类1:2就自动补全了1:10的长度，所以你会看到1:10-1:2或者1:10 / 1:2 是这种结果。那么我们就可以利用这个骚操作来求我们的平均值。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 一步步拆解下</span></span><br><span class="line">&gt; t(expr_df_merge)</span><br><span class="line">            Gene1     Gene2     Gene3     Gene4     Gene5</span><br><span class="line">Control  <span class="number">30.23686</span>  <span class="number">28.73648</span>  <span class="number">28.44910</span>  <span class="number">28.80568</span>  <span class="number">28.78195</span></span><br><span class="line">Treat    <span class="number">39.67515</span>  <span class="number">41.24201</span>  <span class="number">36.50733</span>  <span class="number">41.03790</span>  <span class="number">38.40728</span></span><br><span class="line">Other   <span class="number">120.61424</span> <span class="number">120.05762</span> <span class="number">121.58279</span> <span class="number">120.66697</span> <span class="number">120.10376</span></span><br></pre></td></tr></table></figure>
+<p>这里我们转置了我们的合并重复的矩阵，那么matrix的堆叠顺序就是Control，Treat，Other，Control，Treat……。那么我们就可以根据上面提到的循环补齐操作来除对应的值了。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; t(expr_df_merge) / tissue_freq</span><br><span class="line">            Gene1     Gene2     Gene3     Gene4     Gene5</span><br><span class="line">Control <span class="number">10.078953</span>  <span class="number">9.578828</span>  <span class="number">9.483033</span>  <span class="number">9.601892</span>  <span class="number">9.593985</span></span><br><span class="line">Treat    <span class="number">9.918787</span> <span class="number">10.310502</span>  <span class="number">9.126831</span> <span class="number">10.259474</span>  <span class="number">9.601819</span></span><br><span class="line">Other   <span class="number">60.307119</span> <span class="number">60.028809</span> <span class="number">60.791396</span> <span class="number">60.333487</span> <span class="number">60.051878</span></span><br></pre></td></tr></table></figure>
+<p>这里并不是我们想要的表达量矩阵，所以我们再次转置下。</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt; t(t(expr_df_merge) / tissue_freq)</span><br><span class="line">        Control     Treat    Other</span><br><span class="line">Gene1 <span class="number">10.078953</span>  <span class="number">9.918787</span> <span class="number">60.30712</span></span><br><span class="line">Gene2  <span class="number">9.578828</span> <span class="number">10.310502</span> <span class="number">60.02881</span></span><br><span class="line">Gene3  <span class="number">9.483033</span>  <span class="number">9.126831</span> <span class="number">60.79140</span></span><br><span class="line">Gene4  <span class="number">9.601892</span> <span class="number">10.259474</span> <span class="number">60.33349</span></span><br><span class="line">Gene5  <span class="number">9.593985</span>  <span class="number">9.601819</span> <span class="number">60.05188</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 再次手动检查下</span></span><br><span class="line">&gt; expr_df_merge[<span class="number">1</span>,<span class="number">1</span>] / <span class="number">3</span></span><br><span class="line">[<span class="number">1</span>] <span class="number">10.07895</span></span><br></pre></td></tr></table></figure>
+<h3 id="方法二">方法二</h3>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; sweep(expr_df_merge, <span class="number">2</span>, tissue_freq, FUN = <span class="string">"/"</span>)</span><br><span class="line">        Control     Treat    Other</span><br><span class="line">Gene1 <span class="number">10.078953</span>  <span class="number">9.918787</span> <span class="number">60.30712</span></span><br><span class="line">Gene2  <span class="number">9.578828</span> <span class="number">10.310502</span> <span class="number">60.02881</span></span><br><span class="line">Gene3  <span class="number">9.483033</span>  <span class="number">9.126831</span> <span class="number">60.79140</span></span><br><span class="line">Gene4  <span class="number">9.601892</span> <span class="number">10.259474</span> <span class="number">60.33349</span></span><br><span class="line">Gene5  <span class="number">9.593985</span>  <span class="number">9.601819</span> <span class="number">60.05188</span></span><br></pre></td></tr></table></figure>
+<p>这里我们用到的是sweep函数</p>
+<figure class="highlight r"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Usage</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里x是数据，我们用的是合并了重复的矩阵</span></span><br><span class="line"><span class="comment"># MARGIN是维度，我们用2，即为列</span></span><br><span class="line"><span class="comment"># STATS是统计值，我们这里是个组织的重复频数</span></span><br><span class="line"><span class="comment"># FUN我们用除法</span></span><br><span class="line">sweep(x, MARGIN, STATS, FUN = <span class="string">"-"</span>, check.margin = <span class="literal">TRUE</span>, <span class="keyword">...</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 其实就相当于每列除一个统计值，这里就是除我们的重复频数</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其实sweep就类似于apply，具体的用法大家可以看这个<a href="https://github.com/jianchongsu/learnR/blob/master/learn%20R%20Function---sweep.md" target="_blank" rel="noopener">R函数介绍：sweep()</a></p>
+</blockquote>
+<blockquote>
+<p>感谢师兄对于求平均值过程中的指导╰(￣▽￣)╭</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Bioinformatics/" rel="tag"># Bioinformatics</a>
+            
+              <a href="/tags/R/" rel="tag"># R</a>
+            
+              <a href="/tags/apply-family/" rel="tag"># apply family</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/01/11/R的outer函数与外积/" rel="next" title="R的outer函数与外积">
+                  <i class="fa fa-chevron-left"></i> R的outer函数与外积
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#合并重复"><span class="nav-number">1.</span> <span class="nav-text">合并重复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求平均值"><span class="nav-number">2.</span> <span class="nav-text">求平均值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一"><span class="nav-number">2.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二"><span class="nav-number">2.2.</span> <span class="nav-text">方法二</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Just For Daisy</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Just For Daisy</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.3.0</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+</body>
+</html>
